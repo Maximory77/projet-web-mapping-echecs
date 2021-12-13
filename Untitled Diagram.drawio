@@ -1,11 +1,11 @@
-<mxfile host="app.diagrams.net" modified="2021-12-13T13:03:22.206Z" agent="5.0 (Windows)" etag="cW6EYEYcChS5K4fdziGR" version="15.9.4" type="github">
+<mxfile host="app.diagrams.net" modified="2021-12-13T13:26:30.327Z" agent="5.0 (Windows)" etag="2QXuqE82vrcmee_u8_eP" version="15.9.4" type="github">
   <diagram id="tXxBt-8obERpbL7E4TD6" name="Page-1">
     <mxGraphModel dx="1865" dy="1725" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="TvXLPnFhdgjb_qVagtGU-1" value="&lt;div&gt;&lt;b&gt;login&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- nom&lt;/div&gt;&lt;div&gt;- mdp&lt;/div&gt;&lt;div&gt;- mail&lt;br&gt;&lt;/div&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
-          <mxGeometry x="680" y="10" width="120" height="150" as="geometry" />
+          <mxGeometry x="670" y="-140" width="120" height="150" as="geometry" />
         </mxCell>
         <mxCell id="TvXLPnFhdgjb_qVagtGU-2" value="log.HTML" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
           <mxGeometry x="-255" y="90" width="145" height="100" as="geometry" />
@@ -13,24 +13,32 @@
         <mxCell id="TvXLPnFhdgjb_qVagtGU-3" value="choixPartie.HTML" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
           <mxGeometry x="-252.5" y="260" width="140" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="TvXLPnFhdgjb_qVagtGU-4" value="&lt;div&gt;partie.HTML&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-          <mxGeometry x="-255" y="400" width="135" height="90" as="geometry" />
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.01;entryY=0.779;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=14;" edge="1" parent="1" source="TvXLPnFhdgjb_qVagtGU-4" target="TvXLPnFhdgjb_qVagtGU-20">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="TvXLPnFhdgjb_qVagtGU-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.445;entryDx=0;entryDy=0;fontSize=14;exitX=-0.014;exitY=0.904;exitDx=0;exitDy=0;exitPerimeter=0;entryPerimeter=0;" edge="1" parent="1" source="TvXLPnFhdgjb_qVagtGU-5" target="TvXLPnFhdgjb_qVagtGU-9">
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-4" value="&lt;div&gt;partie.HTML&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="-255" y="490" width="135" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.022;entryY=0.436;entryDx=0;entryDy=0;fontSize=14;entryPerimeter=0;" edge="1" parent="1" target="TvXLPnFhdgjb_qVagtGU-9">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="640" y="559.4" as="sourcePoint" />
+            <mxPoint x="630" y="548" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.667;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=14;" edge="1" parent="1" target="TvXLPnFhdgjb_qVagtGU-10">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="630" y="380" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="TvXLPnFhdgjb_qVagtGU-5" value="&lt;div&gt;&lt;b&gt;Parties&lt;/b&gt;&lt;/div&gt;&lt;div&gt;- id&lt;/div&gt;&lt;div&gt;- nom&lt;/div&gt;&lt;div&gt;- tour&lt;/div&gt;&lt;div&gt;- trait&lt;/div&gt;&lt;div&gt;- nomJ1&lt;br&gt;&lt;/div&gt;&lt;div&gt;- nomJ2&lt;/div&gt;&lt;div&gt;- crJ1&lt;/div&gt;&lt;div&gt;- crJ2&lt;br&gt;&lt;/div&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" vertex="1" parent="1">
-          <mxGeometry x="640" y="340" width="210" height="230" as="geometry" />
+          <mxGeometry x="640" y="290" width="290" height="280" as="geometry" />
         </mxCell>
         <mxCell id="TvXLPnFhdgjb_qVagtGU-7" value="auth.json.php" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="389" y="5" width="90" height="40" as="geometry" />
+          <mxGeometry x="379" y="-145" width="90" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="TvXLPnFhdgjb_qVagtGU-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.667;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="TvXLPnFhdgjb_qVagtGU-9" target="TvXLPnFhdgjb_qVagtGU-20">
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.845;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="TvXLPnFhdgjb_qVagtGU-9" target="TvXLPnFhdgjb_qVagtGU-20">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="TvXLPnFhdgjb_qVagtGU-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;" edge="1" parent="1" source="TvXLPnFhdgjb_qVagtGU-9" target="TvXLPnFhdgjb_qVagtGU-28">
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;exitX=0.801;exitY=1.018;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="TvXLPnFhdgjb_qVagtGU-9" target="TvXLPnFhdgjb_qVagtGU-28">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="TvXLPnFhdgjb_qVagtGU-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.65;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=14;exitX=1.028;exitY=0.182;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="TvXLPnFhdgjb_qVagtGU-9">
@@ -41,37 +49,75 @@
         <mxCell id="TvXLPnFhdgjb_qVagtGU-9" value="maj.json.php" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
           <mxGeometry x="349" y="500" width="181" height="110" as="geometry" />
         </mxCell>
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.01;entryY=0.189;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=14;exitX=1;exitY=0.358;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="TvXLPnFhdgjb_qVagtGU-10" target="TvXLPnFhdgjb_qVagtGU-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.02;entryY=0.176;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=14;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="347" y="359.5" as="sourcePoint" />
+            <mxPoint x="160" y="359.53999999999996" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="298" y="359.5" />
+              <mxPoint x="298" y="359.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
         <mxCell id="TvXLPnFhdgjb_qVagtGU-10" value="cr.json.php" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
           <mxGeometry x="349" y="300" width="181" height="120" as="geometry" />
         </mxCell>
         <mxCell id="TvXLPnFhdgjb_qVagtGU-11" value="&lt;div&gt;nouvellePartie.json.php&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="364" y="160" width="140" height="50" as="geometry" />
+          <mxGeometry x="354" y="10" width="140" height="50" as="geometry" />
         </mxCell>
         <mxCell id="TvXLPnFhdgjb_qVagtGU-12" value="register.json.php" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="389" y="80" width="90" height="40" as="geometry" />
+          <mxGeometry x="379" y="-70" width="90" height="40" as="geometry" />
         </mxCell>
         <mxCell id="TvXLPnFhdgjb_qVagtGU-14" value="&lt;div&gt;log.js&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="150" y="-40" width="100" height="100" as="geometry" />
+          <mxGeometry x="140" y="-190" width="100" height="100" as="geometry" />
         </mxCell>
         <mxCell id="TvXLPnFhdgjb_qVagtGU-19" value="choixPartie.js" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="150" y="100" width="100" height="130" as="geometry" />
+          <mxGeometry x="140" y="-50" width="100" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="TvXLPnFhdgjb_qVagtGU-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="TvXLPnFhdgjb_qVagtGU-20" target="TvXLPnFhdgjb_qVagtGU-9">
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="1" source="TvXLPnFhdgjb_qVagtGU-20" target="TvXLPnFhdgjb_qVagtGU-9">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="TvXLPnFhdgjb_qVagtGU-22" value="&lt;div&gt;GET:&lt;/div&gt;&lt;div&gt;partie,cote,tour,trait&lt;br&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="TvXLPnFhdgjb_qVagtGU-21">
           <mxGeometry x="0.3293" y="3" relative="1" as="geometry">
-            <mxPoint x="-28" y="-14" as="offset" />
+            <mxPoint x="-36" y="-14" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.011;entryY=0.7;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=14;exitX=1;exitY=0.255;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="TvXLPnFhdgjb_qVagtGU-20" target="TvXLPnFhdgjb_qVagtGU-10">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="170" y="384" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-47" value="GET : partie, login" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;" vertex="1" connectable="0" parent="TvXLPnFhdgjb_qVagtGU-45">
+          <mxGeometry x="-0.369" relative="1" as="geometry">
+            <mxPoint x="31" y="6" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="TvXLPnFhdgjb_qVagtGU-20" value="partie.js" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="70" y="450" width="100" height="150" as="geometry" />
+          <mxGeometry x="60" y="310" width="100" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=14;" edge="1" parent="1" source="TvXLPnFhdgjb_qVagtGU-26" target="TvXLPnFhdgjb_qVagtGU-37">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="TvXLPnFhdgjb_qVagtGU-26" value="&lt;div&gt;json :&lt;/div&gt;&lt;div&gt;erreur, ras ou maj&lt;br&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="200" y="555" width="80" height="30" as="geometry" />
+          <mxGeometry x="200" y="555" width="110" height="30" as="geometry" />
         </mxCell>
         <mxCell id="TvXLPnFhdgjb_qVagtGU-28" value="&lt;h1 style=&quot;font-size: 14px&quot;&gt;&lt;font style=&quot;font-size: 14px&quot;&gt;Traitement maj.json.php&lt;/font&gt;&lt;/h1&gt;&lt;div&gt;- vérif id valide et corresp au joueur (partie,cote)&lt;br&gt;&lt;/div&gt;&lt;div&gt;- vérif stade indiqué (tour, trait)&lt;/div&gt;&lt;div&gt;-&amp;nbsp; paramètre optionel fourni ? le vérifier&lt;/div&gt;&lt;div&gt;- si une des cond non vérif : erreur&lt;br&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;" vertex="1" parent="1">
-          <mxGeometry x="325" y="650" width="229" height="120" as="geometry" />
+          <mxGeometry x="380" y="650" width="229" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-37" value="&lt;h1 style=&quot;font-size: 14px&quot;&gt;contenu maj&lt;br&gt;&lt;/h1&gt;&lt;div&gt;- si dernier coup par le joueur :&lt;/div&gt;&lt;div&gt;je_joue([i0,j0,i1,j1,&quot;option&quot;],vues,&lt;/div&gt;&lt;div&gt;prop_null,accepte_null,abandon&lt;/div&gt;&lt;div&gt;- si dernier coup par adversaire :&lt;/div&gt;&lt;div&gt;il_joue:[i0,j0,i1,j1,&quot;option&quot;]),nature,il_joue,coups,vues)&lt;br&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="650" width="320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;" edge="1" parent="1" source="TvXLPnFhdgjb_qVagtGU-49" target="TvXLPnFhdgjb_qVagtGU-51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-49" value="&lt;h1 style=&quot;font-size: 14px&quot;&gt;contenu CR&lt;br&gt;&lt;/h1&gt;&lt;div&gt;- tour&lt;/div&gt;&lt;div&gt;-trait&lt;/div&gt;&lt;div&gt;- cote&lt;/div&gt;&lt;div&gt;- histo&lt;br&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="201.75" y="190" width="125.5" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-51" value="&lt;font style=&quot;font-size: 11px&quot;&gt;json : erreur ou CR&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="209" y="330" width="111" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
