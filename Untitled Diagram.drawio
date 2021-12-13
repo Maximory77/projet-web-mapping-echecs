@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2021-12-13T12:23:25.871Z" agent="5.0 (Windows)" etag="ptJ_WjvxQ9PK1Hoet_Bc" version="15.9.4" type="github">
+<mxfile host="app.diagrams.net" modified="2021-12-13T12:30:16.018Z" agent="5.0 (Windows)" etag="yPtpWvcMvom7kTolWqQW" version="15.9.4" type="github">
   <diagram id="tXxBt-8obERpbL7E4TD6" name="Page-1">
     <mxGraphModel dx="1865" dy="556" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -57,8 +57,8 @@
         <mxCell id="TvXLPnFhdgjb_qVagtGU-26" value="&lt;div&gt;json :&lt;/div&gt;&lt;div&gt;- erreur&lt;/div&gt;&lt;div&gt;- ras&lt;/div&gt;&lt;div&gt;-maj&lt;br&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="285" y="460" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="TvXLPnFhdgjb_qVagtGU-28" value="&lt;h1 style=&quot;font-size: 14px&quot;&gt;&lt;font style=&quot;font-size: 14px&quot;&gt;Traitement maj.json.php&lt;/font&gt;&lt;/h1&gt;&lt;div&gt;- vérif id valide et corresp au joueur&lt;/div&gt;&lt;div&gt;- &lt;br&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;" vertex="1" parent="1">
-          <mxGeometry x="174" y="520" width="240" height="155" as="geometry" />
+        <mxCell id="TvXLPnFhdgjb_qVagtGU-28" value="&lt;h1 style=&quot;font-size: 14px&quot;&gt;&lt;font style=&quot;font-size: 14px&quot;&gt;Traitement maj.json.php&lt;/font&gt;&lt;/h1&gt;&lt;div&gt;- vérif id valide et corresp au joueur (partie,cote)&lt;br&gt;&lt;/div&gt;&lt;div&gt;- vérif stade indiqué (tour, trait, &lt;br&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="285" y="520" width="240" height="155" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
