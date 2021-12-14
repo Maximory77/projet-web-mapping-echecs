@@ -2,9 +2,28 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
     <title>chess wihou</title>
   </head>
   <body>
+    <header>
+      <div id="bandeau">
+        <ul id="menu">
+          <li><img src=".png"></li>
+          <li><a class="active" href="/index">Accueil</a></li>
+          <li><a href="/solution.html" target="_blank" rel="noopener noreferrer">Solution</a></li>
+          <li><a href="/scores.html">Scores</a></li>
+          <li style="float:right"><a href="apropos.html">À propos</a></li>
+        </ul>
+      </div>
 
+      <h1> Chess Wihou </h1>
+    </header>
+
+    <div id="container">
+      <form id="login" name="login"  action="jeu.html" >
+          <label><input type="text" placeholder="Nom de joueur" username="username" id="pseudo"></label>
+          <button id="startButton">SE CONNECTER</button>
+    </div>
   </body>
 </html>
