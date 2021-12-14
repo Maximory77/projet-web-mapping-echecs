@@ -9,7 +9,6 @@
     <header>
       <div id="bandeau">
         <ul id="menu">
-          <li><img src=".png"></li>
           <li><a class="active" href="/index">Accueil</a></li>
           <li><a href="/solution.html" target="_blank" rel="noopener noreferrer">Solution</a></li>
           <li><a href="/scores.html">Scores</a></li>
@@ -21,8 +20,11 @@
     </header>
 
     <div id="container">
+      <div id="erreur">
+      </div>
       <form id="login" name="login"  action="jeu.html" >
           <label><input type="text" placeholder="Nom de joueur" username="username" id="pseudo"></label>
+          <label><input type="text" placeholder="Mot de passe" password="password" id="mdp"></label>
           <button id="startButton">SE CONNECTER</button>
     </div>
   </body>
