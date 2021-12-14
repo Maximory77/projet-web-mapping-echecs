@@ -4,7 +4,6 @@
   vérifie que la partie en est au stade indiqué par les param "tour" et "trait"
   Si le paramètre optionnel fourni est correct (tour indiqué = tour courant, joueur a bien le trait et rang coup valide)
     alors arbitrage est lancé pour jouer le coup et rédiger une nouvelle situation
-  Si une des conditions précédentes n'est pas vérifié, erreur lancée
 
   entrée :
     partie : id de la partie en cours
@@ -20,43 +19,56 @@
 */
 
 $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
-
 //Vérification du lien
 if (!$link) {
   echo json_encode(array('erreur' => "Erreur de connexion à la base de données"));
   die('Erreur de connexion');
 }
-
 //Prévention de potentiels problèmes d'encodages
 mysqli_set_charset($link, "utf8");
 
-if (isset($_GET['partie'])) {
 
-  // s'ils sont bien définis, on récupère les données en entrée
-  $partie = $_GET['partie'];
-  $id_joueur = $_GET['id_joueur'];
+// on récupère les données en entrée
+$id_joueur = $_GET['id_joueur'];
+$partie = $_GET['partie'];
+$cote = $_GET['cote'];
+$tour = $_GET['tour'];
+$trait = $_GET['trait'];
 
-  // vérification id valide et correspond à un joueur inscrit sur la partie
-  $requete = "SELECT j1,j2,tour,trait,crj1,crj2 FROM parties WHERE id = $partie";
-  if ($result = mysqli_query($link,$requete)) {
-    $tableau = [];
-    while ($ligne = mysqli_fetch_assoc($result)) {
-      if ($ligne['j1'] == $id_joueur) { // s'il s'agit du joueur 1
-        $CR = array('tour' => $ligne['tour'], 'trait' => $ligne['trait'], 'cote' => 2, 'histo' => $ligne['crj1']);
-        echo json_encode($CR);
-      } else if ($ligne['j2'] == $id_joueur) { // s'il s'agit du joeur 2
-        $CR = array('tour' => $ligne['tour'], 'trait' => $ligne['trait'], 'cote' => 1, 'histo' => $ligne['crj2']);
-        echo json_encode($CR);
-      } else {
-        echo json_encode(array('erreur' => "Ce participant n'est pas sur cette partie"));
+// on effectue toutes les vérifications avant de répartir la tache vers différentes fonctions selon le cas
+$requete = "SELECT j1,j2,tour,trait FROM parties WHERE id = $partie";
+if ($result = mysqli_query($link,$requete)) {
+  while ($ligne = mysqli_fetch_assoc($result)) {
+    // on vérifie que le joueur correspond au bon côté
+    if (($id_joueur==$ligne['j1'] AND $cote==2) OR ($id_joueur==$ligne['j2'] AND $cote==1)){
+      // on vérifie que la partie en est au stade indiqué par les param "tour" et "trait"
+      if ($tour==$ligne['tour'] AND $trait==$ligne['trait']) { // A JOUR
+        // si on est à jour c'est qu'on veut jouer ou que c'est encore à l'adversaire de jouer
+        if (isset($_GET['coup'])) { // le client a lancé un coup
+          $coup = $_GET['coup'];
+          echo "on a joué";
+        } else if ($cote!=$ligne['trait']) { // si on attend le coup de l'adversaire
+          echo json_encode(array('ras' => 1));
+        } else {
+          echo json_encode(array('erreur' => "aucune des situations ne correspond"));
+        }
+      } else { // si on n'est pas à jour c'est que l'adversaire a joué => MAJ
+        echo "adversaire a joué";
       }
+    } else {
+      echo json_encode(array('erreur' => "Le joueur ne correspond pas au côté en entrée."));
     }
-  } else {
-    echo json_encode(array('erreur' => "Erreur de requête de base de données."));
   }
 } else {
-  echo json_encode(array('erreur' => "Erreur de paramètre en entrée"));;
+  echo json_encode(array('erreur' => "Erreur de requête de base de données."));
 }
+
+
+function attente($toto) {
+    $toto += 15;
+    return $toto + 10;
+}
+
 
 
 ?>
