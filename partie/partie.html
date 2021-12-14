@@ -3,18 +3,20 @@
   <head>
     <meta charset="utf-8">
     <title>echequier</title>
-    <link href="echequier.css" rel="stylesheet" type="text/css"  />
+    <link href="../style.css" rel="stylesheet" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   
   </head>
   <body>
   
     <div class="menu">
-      <a href="#" class="active">Home</a>
-      <a href="#">Link 1</a>
-      <a href="#">Link 2</a>
-      <a href="#">Link 3</a>
-      <a href="#">Link 4</a>
+      <a href="#">Accueil</a>
+      <a href="../index.html">Connection</a>
+      <a href="#" class="active">Partie en cours</a>
+      <a href="/choixPartie/choixPartie.html">Choix Partie</a>
+      <a href="#">Meilleurs joueurs</a>
+      <a href="#">Voir une partie</a>
+      <a href="#">Aller bosser la géodésie</a>
     </div>
     
     <div id="container">
@@ -29,7 +31,14 @@
         <div class="case_blanche_case" id="case17"></div>  <div class="case_noire_case" id="case27"></div>  <div class="case_blanche_case" id="case37"></div>  <div class="case_noire_case" id="case47"></div>  <div class="case_blanche_case" id="case57"></div>  <div class="case_noire_case" id="case67"></div>  <div class="case_blanche_case" id="case77"></div>  <div class="case_noire_case" id="case87"></div>
         <div class="case_noire_case" id="case18"></div>  <div class="case_blanche_case" id="case28"></div>  <div class="case_noire_case" id="case38"></div>  <div class="case_blanche_case" id="case48"></div>  <div class="case_noire_case" id="case58"></div>  <div class="case_blanche_case" id="case68"></div>  <div class="case_noire_case" id="case78"></div>  <div class="case_blanche_case" id="case88"></div>
       </div>
-      <div class="cimetiere j2"></div>
+      <div class="cimetiere j2">
+        <img draggable="true" src="../images/tour_blanc.png" alt="tour_blanc">
+        <img draggable="true" src="../images/tour_blanc.png" alt="tour_blanc">
+        <img draggable="true" src="../images/tour_blanc.png" alt="tour_blanc">
+        <img draggable="true" src="../images/tour_blanc.png" alt="tour_blanc">
+
+
+      </div>
       <div id="options">
         <div id="j1">NOM JOUEUR 1</div>
         <button>Proposer Null</button>

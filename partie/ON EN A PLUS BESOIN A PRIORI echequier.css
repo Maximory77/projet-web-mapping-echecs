@@ -13,7 +13,6 @@ body {
   }
 .menu {
     grid-column: 1;
-
     background-color: rgb(39, 39, 39);
 }
   
@@ -30,13 +29,12 @@ body {
   }
   
   .menu a.active {
-    background-color: #04AA6D; /* Add a green color to the "active/current" link */
+    background-color: #7c3636;; /* Add a green color to the "active/current" link */
     color: white;
   }
 
 
 #container {
-    /* grid-row: 1; */
     grid-column: 2;
 
     display: grid;
@@ -48,7 +46,9 @@ body {
 }
 
 .cimetiere {
-    background-color: rgb(121, 58, 58);
+    /* background-color: rgb(121, 58, 58); */
+    display: flex;
+    justify-content: center;
 }
 
 .cimetiere .j1 {
@@ -59,43 +59,41 @@ body {
 .cimetiere .j2 {
     grid-row: 3 ;
     grid-column: 1; 
- }
+}
+
+.cimetiere img {
+  width: 3em;
+  height: 3em;
+}
 
 #plateau{
     grid-column: 1;
 
-    width:32em;
-    height:32em;
-    border:1px;
-    border:1px solid #999;
+    width:36em;
+    height:36em;
+    /* border:1px;
+    border:1px solid #999; */
     margin: auto;
+    border-radius: 50px;
 }
 
 #plateau div{
     /* background: #fff; */
-    width:4em;
-    height:4em;
+    width:4.5em;
+    height:4.5em;
     float:left;
 }
 
-/* #plateau div{background: #fff}
-   #plateau div:nth-child(2), #plateau div:nth-child(4), #plateau div:nth-child(6), #plateau div:nth-child(8),
-   #plateau div:nth-child(9), #plateau div:nth-child(11), #plateau div:nth-child(13), #plateau div:nth-child(15),
-   #plateau div:nth-child(18), #plateau div:nth-child(20), #plateau div:nth-child(22), #plateau div:nth-child(24),
-   #plateau div:nth-child(25), #plateau div:nth-child(27), #plateau div:nth-child(29), #plateau div:nth-child(31),
-   #plateau div:nth-child(34), #plateau div:nth-child(36), #plateau div:nth-child(38), #plateau div:nth-child(40),
-   #plateau div:nth-child(41), #plateau div:nth-child(43), #plateau div:nth-child(45), #plateau div:nth-child(47),
-   #plateau div:nth-child(50), #plateau div:nth-child(52), #plateau div:nth-child(54), #plateau div:nth-child(56),
-   #plateau div:nth-child(57), #plateau div:nth-child(59), #plateau div:nth-child(61), #plateau div:nth-child(63)
-   {
-   background-color:#000;
-} */
+.piece {
+  width: 100%;
+  height: 100%;
+}
 
 .case_noire_case{
     background-color:#7c3636;
 }
 .case_blanche_case{
-background-color:#ececec;
+background-color:#e6e5d0;
 }
 
 
@@ -107,6 +105,7 @@ background-color:#ececec;
     justify-content: space-between;
     flex-direction: column;
 
+    border-radius: 10px;
     margin-left: 0.5em;
     padding: 2em;
     background-color: rgb(42, 42, 42);

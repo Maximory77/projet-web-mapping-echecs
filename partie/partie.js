@@ -16,7 +16,7 @@ var initialisation_type = ["tour_blanc", "cavalier_blanc", "fou_blanc", "roi_bla
 for (let i=0; i<initialisation_pos.length;i++){
   coords = initialisation_pos[i];
   var type = initialisation_type[i];
-  $(`#${coords}`).html('<img class="image" draggable="true" src="../images/'+type+'.png" alt="'+type+'">');
+  $(`#${coords}`).html('<img class="piece" draggable="true" src="../images/'+type+'.png" alt="'+type+'">');
 }
 
 
@@ -26,7 +26,7 @@ for (let i=0; i<initialisation_pos.length;i++){
 coups_possible=[[2,1,1,3],[2,1,3,3],[7,1,6,3],[7,1,8,3],[1,2,1,3],[2,2,2,3],[3,2,3,3],[4,2,4,3],[5,2,5,3],[6,2,6,3],[7,2,7,3],[8,2,8,3],[1,2,1,4],[2,2,2,4],[3,2,3,4],[4,2,4,4],[5,2,5,4],[6,2,6,4],[7,2,7,4],[8,2,8,4]]
 
 
-$(`.image`).mousedown(dragS);
+$(`.piece`).mousedown(dragS);
 function dragS(e){
   var pos=e.target.parentElement["id"]
   var pos_comparaison="["+pos[4]+","+pos[5]+"]";

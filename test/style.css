@@ -32,7 +32,7 @@
   font-family: "Roboto", sans-serif;
   text-transform: uppercase;
   outline: 0;
-  background: #4CAF50;
+  background: #7c3636;
   width: 100%;
   border: 0;
   padding: 15px;
@@ -51,7 +51,7 @@
   font-size: 12px;
 }
 .form .message a {
-  color: #4CAF50;
+  color: #7c3636;
   text-decoration: none;
 }
 .form .register-form {
