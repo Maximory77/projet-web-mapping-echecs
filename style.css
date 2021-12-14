@@ -48,19 +48,13 @@ footer {
 Menu----------------------------------------------------------------------------
 */
 #bandeau {
-	width=80%;
+	/* width=80%; */
   grid-column: 2/-1;
   margin: 0 auto;
   margin-bottom: 10px;
   background-color: white;
-	position: sticky;
+	/* position: sticky; */
 	top: 0px;
-}
-
-
-
-#bandeau a {
-  /* transition: all 0.2s ;          /* Ajout des effets de transition */ */
 }
 
 #bandeau ul {
@@ -70,9 +64,6 @@ Menu----------------------------------------------------------------------------
   overflow: hidden;
   background-color: #333;
 }
-/* #logo {
-  height: 100%;
-} */
 
 #bandeau img {
   height: 47px;
@@ -208,3 +199,29 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;      
 }
+
+
+
+#plateau{
+  width:400px;
+  height:400px;
+  border:1px;
+  border:1px solid #999;
+ }
+ #plateau div{
+  width:50px;
+  height:50px;
+  float:left;
+ }
+ #plateau div{background: #fff}
+ #plateau div:nth-child(2), #chess div:nth-child(4), #chess div:nth-child(6), #chess div:nth-child(8),
+ #plateau div:nth-child(9), #chess div:nth-child(11), #chess div:nth-child(13), #chess div:nth-child(15),
+ #plateau div:nth-child(18), #chess div:nth-child(20), #chess div:nth-child(22), #chess div:nth-child(24),
+ #plateau div:nth-child(25), #chess div:nth-child(27), #chess div:nth-child(29), #chess div:nth-child(31),
+ #plateau div:nth-child(34), #chess div:nth-child(36), #chess div:nth-child(38), #chess div:nth-child(40),
+ #chess div:nth-child(41), #chess div:nth-child(43), #chess div:nth-child(45), #chess div:nth-child(47),
+ #chess div:nth-child(50), #chess div:nth-child(52), #chess div:nth-child(54), #chess div:nth-child(56),
+ #chess div:nth-child(57), #chess div:nth-child(59), #chess div:nth-child(61), #chess div:nth-child(63)
+ {
+ background-color:#000;
+ }
