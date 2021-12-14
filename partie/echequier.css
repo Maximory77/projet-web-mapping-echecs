@@ -1,7 +1,7 @@
 body {
     display: grid;
-    grid-template-columns: 10em 1fr;
-    grid-template-rows: 1fr 5em;
+    grid-template-columns: 12em 1fr;
+    grid-template-rows: 1fr;
     height: 100vh;
     width: 100vw;
 
@@ -12,16 +12,14 @@ body {
     font-weight: lighter;
   }
 .menu {
+    grid-column: 1;
+
     background-color: rgb(39, 39, 39);
 }
-
-.menu {
-    
-  }
   
   .menu a {
-    background-color: #eee; /* Grey background color */
-    color: black; /* Black text color */
+    background-color: rgb(42, 42, 42); /* Grey background color */
+    color: rgb(231, 231, 231); /* Black text color */
     display: block; /* Make the links appear below each other */
     padding: 12px; /* Add some padding */
     text-decoration: none; /* Remove underline from links */
@@ -38,14 +36,15 @@ body {
 
 
 #container {
-    grid-row: 1;
+    /* grid-row: 1; */
     grid-column: 2;
 
     display: grid;
     grid-template-columns: 3fr 1fr;
     grid-template-rows: 5em 1fr 5em;
 
-    background-color: rgb(203, 219, 133);
+    padding: 2em;
+    background-color: rgb(82, 82, 82);
 }
 
 .cimetiere {
@@ -93,7 +92,19 @@ body {
 
 #options {
     grid-column: 2;
-    grid-row: 2;
-  
-    background-color: #427dff;
-  }
+    grid-row: 1/4;
+
+    display:flex;
+    justify-content: space-between;
+    flex-direction: column;
+
+    margin-left: 0.5em;
+    padding: 2em;
+    background-color: rgb(42, 42, 42);
+    color: rgb(231, 231, 231);
+}
+
+#option button {
+    margin-top: 1em;
+    margin-bottom: 5em;
+}
