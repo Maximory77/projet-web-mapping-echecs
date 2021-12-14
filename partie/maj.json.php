@@ -53,7 +53,7 @@ if ($result = mysqli_query($link,$requete)) {
           echo json_encode(array('erreur' => "aucune des situations ne correspond"));
         }
       } else { // si on n'est pas à jour c'est que l'adversaire a joué => MAJ
-        echo "adversaire a joué";
+        MAJ();
       }
     } else {
       echo json_encode(array('erreur' => "Le joueur ne correspond pas au côté en entrée."));
@@ -64,9 +64,20 @@ if ($result = mysqli_query($link,$requete)) {
 }
 
 
-function attente($toto) {
-    $toto += 15;
-    return $toto + 10;
+function MAJ() {
+
+  // on récupère la nouvelle disposition sur la base de données
+  $partie = $_GET['partie'];
+  $requete_plateau = "SELECT plateau FROM parties WHERE id = $partie";
+  $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
+  if ($result = mysqli_query($link,$requete_plateau)) {
+    $plateau = mysqli_fetch_assoc($result)['plateau'];
+    $test = json_decode($plateau);
+    echo $test["P11"];
+  } else {
+    echo "pb";
+  }
+
 }
 
 
