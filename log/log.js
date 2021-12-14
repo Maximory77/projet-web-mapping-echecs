@@ -6,8 +6,11 @@ let erreur = document.getElementById('erreur');
 
 var BD_auth;
 
-startButton.addEventListener('click', login);
 
+
+$('.message a').click(function(){
+   $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
+});
 
 function login(pseudo, mdp){
   fetch('../auth.json.php')
@@ -41,7 +44,7 @@ function CreationCompte(pseudo, mail, mdp){
       erreur.innerHTML = "Un compte est déjà associé à cette adresse"
     }
     else if(mdp.length<6){
-      // Un mot de passe doit être de taille supérieure 
+      // Un mot de passe doit être de taille supérieure
       erreur.innerHTML = "Veuillez choisir un mot de passe de plus de 6 caractères"
     }
     else {
