@@ -3,6 +3,10 @@
   Vérifie id login valide et correspond à un joueur inscrit sur la partie,
   renvoie soit un message d'erreur, soit le compte rendu
 
+  en entrée :
+  partie : identifiant de la partie
+  id_joueur = nom du joueur
+
   Compte rendu :
     tour : numéro du tour, le premier tour est le tour 1
     trait : 1 si c'est au blancs de jouer, 2 si c'est aux noirs
