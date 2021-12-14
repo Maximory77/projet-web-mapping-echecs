@@ -1,0 +1,108 @@
+*{
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+  grid-template-rows: 1fr 3fr 3fr 3fr 1fr;
+  height: 100vh;
+  width: 100vw;
+
+  font-family: 'Open Sans', sans-serif;
+  font-weight: lighter;
+
+  /* background-image: url('image/apple-touch-icon.png'); */
+}
+
+header {
+  grid-column: 1/-1;
+  grid-row: 1;
+  text-align:center;
+}
+
+footer {
+  grid-column: 1 / 7;
+  grid-row: 5;
+  text-align: right;
+	background-color: #DFE0E0;
+  padding-right: 10px;
+}
+
+#container {
+  grid-column: 2;
+  grid-row: 2/5;
+
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 4em;
+  grid-gap: 4px;
+  border: solid 2px black;
+  padding: 10px;
+  background-color: rgb(240, 240, 250);
+}
+
+/*
+Menu----------------------------------------------------------------------------
+*/
+#bandeau {
+	width=80%;
+  grid-column: 2/-1;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  background-color: white;
+	position: sticky;
+	top: 0px;
+}
+
+
+
+#bandeau a {
+  /* transition: all 0.2s ;          /* Ajout des effets de transition */ */
+}
+
+#bandeau ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+/* #logo {
+  height: 100%;
+} */
+
+#bandeau img {
+  height: 47px;
+  width: 100%;
+  padding-left: 10px;
+  padding-right: 5px;
+  padding-top: 5px;
+}
+
+#bandeau ul li {
+	float: left;
+}
+
+#bandeau li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 15px 25px;
+  text-decoration: none;
+}
+
+#bandeau a:hover {
+	color: #ffc442;
+}
+
+#bandeau li a:hover:not(.active) {
+  background-color: #111;
+}
+
+.active {
+  background-color: #427dff;
+}
+/* https://www.pierre-giraud.com/html-css-apprendre-coder-cours/creation-menu-deroulant/ */
