@@ -71,13 +71,22 @@ function MAJ() {
   $requete_plateau = "SELECT plateau FROM parties WHERE id = $partie";
   $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
   if ($result = mysqli_query($link,$requete_plateau)) {
-    $plateau = mysqli_fetch_assoc($result)['plateau'];
-    $test = json_decode($plateau);
+
+    //$json = mysqli_fetch_assoc($result)['plateau'];
+    //echo $plateau;
+
+    $json = '{"P11":{"i":1,"j":1},"R1":{"i":1,"j":2},"P22":{"i":7,"j":2},"R2":{"i":8,"j":4}}';
+    //$json = '{"a":1,"b":2,"c":3,"d":4,"e":5}';
+    $aa = json_decode($json,true);
+    echo $aa["P11"]["i"];
+
+    /*
+    var $test = json_decode($json,true);
     echo $test["P11"];
+    */
   } else {
     echo "pb";
   }
-
 }
 
 
