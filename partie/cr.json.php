@@ -37,10 +37,10 @@ if (isset($_GET['partie'])) {
   if ($result = mysqli_query($link,$requete)) {
     while ($ligne = mysqli_fetch_assoc($result)) {
       if ($ligne['j1'] == $id_joueur) { // s'il s'agit du joueur 1
-        $CR = array('tour' => $ligne['tour'], 'trait' => $ligne['trait'], 'cote' => 2, 'histo' => $ligne['crj1']);
+        $CR = array('tour' => $ligne['tour'], 'trait' => $ligne['trait'], 'cote' => 2, 'histo' => $ligne['histo1']);
         echo json_encode($CR);
       } else if ($ligne['j2'] == $id_joueur) { // s'il s'agit du joeur 2
-        $CR = array('tour' => $ligne['tour'], 'trait' => $ligne['trait'], 'cote' => 1, 'histo' => $ligne['crj2']);
+        $CR = array('tour' => $ligne['tour'], 'trait' => $ligne['trait'], 'cote' => 1, 'histo' => $ligne['histo2']);
         echo json_encode($CR);
       } else {
         echo json_encode(array('erreur' => "Ce participant n'est pas sur cette partie"));

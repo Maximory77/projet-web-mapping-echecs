@@ -76,32 +76,62 @@ function MAJ($cote) {
   $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
   if ($result = mysqli_query($link,$requete_plateau)) {
     $plateau = json_decode(mysqli_fetch_assoc($result)['plateau'],true);
-    //echo $plateau["R1"]["j"];
     // on parcourt toutes les pièces de la couleur du joueur et on ajoute
     // les possibilités dans la liste des possibilités
     foreach ($plateau as $piece => $position) { // on parcourt toutes les pièces
       if ($piece[1] == $cote) { // on ne prend que celles du côté du joueur courant
         // on va alors calculer les possibilités de chaque pièce selon sa valeur
-        if ($piece[0] == 'P') {
+        if ($piece[0] == 'P') { // il s'agit d'un pion
           $retour_pion = pion($piece,$plateau,$cote,$retour);
           $retour["coups"] = array_merge($retour["coups"],$retour_pion["coups"]);
           $retour["vues"] = array_merge($retour["vues"],$retour_pion["vues"]);
-        } else if ($piece[0] == 'F') {
+        } else if ($piece[0] == 'F') { // il s'agit d'un fou
           $retour_fou = fou($piece,$plateau,$cote,$retour);
           $retour["coups"] = array_merge($retour["coups"],$retour_fou["coups"]);
-        } else if ($piece[0] == 'T') {
+        } else if ($piece[0] == 'T') { // il s'agit d'une tour
           $retour_tour = tour($piece,$plateau,$cote,$retour);
           $retour["coups"] = array_merge($retour["coups"],$retour_tour["coups"]);
-        } else if ($piece[0] == 'D') {
+        } else if ($piece[0] == 'D') { // il s'agit de la dame
           $retour_dame = dame($piece,$plateau,$cote,$retour);
           $retour["coups"] = array_merge($retour["coups"],$retour_dame["coups"]);
-        } else if ($piece[0] == 'C') {
+        } else if ($piece[0] == 'C') { // il s'agit d'un cavalier
           $retour_cavalier = cavalier($piece,$plateau,$cote,$retour);
           $retour["coups"] = array_merge($retour["coups"],$retour_cavalier["coups"]);
+        } else { // il s'agit du roi
+          $retour_roi = roi($piece,$plateau,$cote,$retour);
+          $retour["coups"] = array_merge($retour["coups"],$retour_roi["coups"]);
         }
       }
     }
-    echo json_encode($retour);
+
+    // on va alors préparer la partie de la réponse correspondant au coup joué par l'adversaire
+    $requete_histos = "SELECT histo1,histo2 FROM parties WHERE id = $partie";
+    if ($result_histos = mysqli_query($link,$requete_histos)) {
+      // récupération des historiques des joueurs
+      $histos = mysqli_fetch_assoc($result_histos);
+      if ($cote == 2) {
+        $histo_joueur = json_decode($histos['histo1'],true);
+        $histo_adv = json_decode($histos['histo2'],true);
+      } else {
+        $histo_joueur = json_decode($histos['histo2'],true);
+        $histo_adv = json_decode($histos['histo1'],true);
+      }
+      // récupération des coordonnées du dernier coup de l'adversaire
+      $coords_coup_adv = end($histo_adv["histo"])["je_joue"];
+      // si les coordonnées de départ étaient vues par le joueur courant (cr du joueur, dernier coup il_joue)
+    } else {
+      echo json_encode(array("erreur" => "Erreur de requête de base de données."));
+    }
+
+    // => on les met [i_adv_dep,j_adv_dep,?,?], sinon [0,0,?,?]
+    // si les coordonnées d'arrivée sont actuellement visibles (voir avec $plateau courant)
+    // => on les met [?,?,i_adv_arr,j_adv,arr,"X"], sinon [?,?,0,0]
+    // + ajouter nature si on voit la pièce
+
+
+
+
+    //echo json_encode($retour);
   } else {
     echo json_encode(array("erreur" => "Erreur de requête de base de données."));
   }
@@ -173,6 +203,32 @@ function cavalier($piece,$plateau,$cote) {
   }
   return array("coups"=>$coups_par_cavalier); // on renvoie alors le résultat
 }
+
+
+function roi($piece,$plateau,$cote) {
+  $coups_par_roi = array();
+  $i_r = $plateau[$piece]["i"];
+  $j_r = $plateau[$piece]["j"];
+  // on va parcourir les cases atteintes par le cavalier
+  foreach(array(array($i_r-1,$j_r-1),array($i_r,$j_r-1),array($i_r+1,$j_r-1),
+                array($i_r-1,$j_r+1),array($i_r,$j_r+1),array($i_r+1,$j_r+1),
+                array($i_r-1,$j_r),array($i_r+1,$j_r)) as $coord_expl) {
+    $i_expl = $coord_expl[0];
+    $j_expl = $coord_expl[1];
+    if (!(($i_expl<=0)||($i_expl>=9)||($j_expl<=0)||($j_expl>=9))) { // si la case explorée est bien sur l'échiquier
+      $occupee = occupee($plateau,$i_expl,$j_expl); // on recherche si elle est occupée
+      if ($occupee == false) { // s'il n'y a rien sur cette case
+        $coups_par_roi[] = [$i_r,$j_r,$i_expl,$j_expl];
+      } else { // si on rencontre un obstacle
+        if ($occupee[1]!=$cote) { // si l'obstacle n'est pas de la couleur du joueur
+          $coups_par_roi[] = [$i_r,$j_r,$i_expl,$j_expl,$occupee[0]]; // la pièce peut prendre celle sur la case explorée
+        }
+      }
+    }
+  }
+  return array("coups"=>$coups_par_roi); // on renvoie alors le résultat
+}
+
 
 function fou($piece,$plateau,$cote) {
   $coups_par_fou = array();
