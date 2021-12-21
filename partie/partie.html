@@ -10,16 +10,27 @@
   <body>
   
     <div class="menu">
-      <a href="#">Accueil</a>
-      <a href="../index.html">Connection</a>
-      <a href="#" class="active">Partie en cours</a>
-      <a href="/choixPartie/choixPartie.html">Choix Partie</a>
-      <a href="#">Meilleurs joueurs</a>
-      <a href="#">Voir une partie</a>
-      <a href="#">Aller bosser la géodésie</a>
+      <a id="logo" href="#">I</a>
+      <a class="active" href="/choixPartie/choixPartie.html">Jouer</a>
+      <a href="#">Regarder</a>
+      <a href="#">Classement</a>
+      <a id="apropos" href="#">A propos</a>
+      <div class="id">
+        <p>NOM DU JOUEUR</p>
+        <a class="connection" href="../index.html">Connection</a>
+        <a class="connection" href="#">Déonnection</a>
+      </div>
+      
+      <a href="#" class="partie_temporaire">Partie en cours</a> <!--temporaire -->
+      
+      <div id="footer">
+        <p><strong>Kévin Beaupuy, Florian Bueno, Clément Fougerouse, Baptiste Rivière &copy; </strong></p>
+        <p>Décembre 2021-Janvier 2022</p>
+      </div>
     </div>
     
     <div id="container">
+    <!-- <div class ="container jeu"> -->
       <div class="cimetiere j1"></div>
       <div id="plateau">
         <div class="case_blanche_case" id="case11"></div>  <div class="case_noire_case" id="case21"></div>  <div class="case_blanche_case" id="case31"></div>  <div class="case_noire_case" id="case41"></div>  <div class="case_blanche_case" id="case51"></div>  <div class="case_noire_case" id="case61"></div>  <div class="case_blanche_case" id="case71"></div>  <div class="case_noire_case" id="case81"></div>
@@ -48,6 +59,7 @@
         <div id="j2">NOM JOUEUR 2</div>
       </div>
     </div>
+
     
     <script type="text/javascript" src="partie.js"></script>
   

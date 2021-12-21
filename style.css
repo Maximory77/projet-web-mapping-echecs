@@ -34,26 +34,74 @@ body {
 /*----------------------------------------------------------------------------
 Menu
 ----------------------------------------------------------------------------*/
+@import url('https://fonts.googleapis.com/css2?family=Asul&display=swap');
 .menu {
+  font-family: 'Asul', sans-serif;
+  color: rgb(100, 100, 100);
   grid-column: 1;
-  background-color: rgb(39, 39, 39);
+  background-color: rgb(42, 42, 42);
+
+  display:flex;
+  /* justify-content: space-between; */
+  flex-direction: column;
 }
 
 .menu a {
   background-color: rgb(42, 42, 42); /* Grey background color */
-  color: rgb(231, 231, 231); /* Black text color */
+  color: rgb(194, 194, 194); /* Black text color */
   display: block; /* Make the links appear below each other */
   padding: 12px; /* Add some padding */
   text-decoration: none; /* Remove underline from links */
 }
 
 .menu a:hover {
-  background-color: #ccc; /* Dark grey background on mouse-over */
+  background-color: #1a1a1a; /* Dark grey background on mouse-over */
+  color: rgb(255, 255, 255);
 }
 
 .menu a.active {
-  background-color: #7c3636;; /* Add a green color to the "active/current" link */
+  background-color: #7c3636; /* Add a green color to the "active/current" link */
   color: white;
+}
+
+.menu .id {
+  margin-top: 2em;
+  text-align: center;
+}
+
+.menu .connection {
+  /* border: 3px solid rgb(0, 0, 0); */
+  padding : 2px;
+  margin: 10px;
+  border-radius: 10px;
+  background-color: #7c3636;
+
+}
+
+.menu #logo {
+  margin-top: 5px;
+  margin-bottom: 1.5em;
+  background-image: url("../images/logo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.menu .partie_temporaire {
+  margin-top: 10em;
+  background-color: #51ff00; 
+}
+
+/* .menu #apropos {
+  margin-bottom: 0em;
+  flex: end;
+} */
+
+.menu #footer {
+  text-align: center;
+  font-size: smaller;
+  margin-bottom: 1em;
+  margin-top: auto;
 }
 /*----------------------------------------------------------------------------
 Login
@@ -101,7 +149,7 @@ Login
   cursor: pointer;
 }
 .form button:hover,.form button:active,.form button:focus {
-  background: #43A047;
+  background: #d3d29e;
 }
 .form .message {
   margin: 15px 0 0;
@@ -155,54 +203,21 @@ body {
 }
 
 /*----------------------------------------------------------------------------
+Choix partie
+----------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------
 Jeu
 ----------------------------------------------------------------------------*/
-body {
-  display: grid;
-  grid-template-columns: 12em 1fr;
-  grid-template-rows: 1fr;
-  height: 100vh;
-  width: 100vw;
-
-  padding: 0;
-  margin: 0;
-  background-color: rgb(42, 42, 42);
-  font-family: 'Open Sans', sans-serif;
-  font-weight: lighter;
-}
-.menu {
-  grid-column: 1;
-  background-color: rgb(39, 39, 39);
-}
-
-.menu a {
-  background-color: rgb(42, 42, 42); /* Grey background color */
-  color: rgb(231, 231, 231); /* Black text color */
-  display: block; /* Make the links appear below each other */
-  padding: 12px; /* Add some padding */
-  text-decoration: none; /* Remove underline from links */
-}
-
-.menu a:hover {
-  background-color: #ccc; /* Dark grey background on mouse-over */
-}
-
-.menu a.active {
-  background-color: #7c3636;; /* Add a green color to the "active/current" link */
-  color: white;
-}
-
-
-#container {
-  grid-column: 2;
-
+/* .container .jeu {
   display: grid;
   grid-template-columns: 3fr 1fr;
   grid-template-rows: 5em 1fr 5em;
 
   padding: 2em;
   background-color: rgb(82, 82, 82);
-}
+} */
 
 .cimetiere {
   /* background-color: rgb(121, 58, 58); */
@@ -277,5 +292,5 @@ background-color:#e6e5d0;
 }
 
 /*----------------------------------------------------------------------------
-Jeu
+Blabla
 ----------------------------------------------------------------------------*/

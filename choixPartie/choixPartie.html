@@ -3,19 +3,35 @@
   <head>
     <meta charset="utf-8">
     <title>Accueil du jeu Chess Wihou</title>
-    <link rel="stylesheet" href="../choixPartie.css">
+    <link rel="stylesheet" href="../style.css">
   </head>
   <body>
-    <div class="entete">
-      <h1>Chess Wihou</h1>
+    <div class="menu">
+      <a id="logo" href="#">I</a>
+      <a class="active" href="/choixPartie/choixPartie.html">Jouer</a>
+      <a href="#">Regarder</a>
+      <a href="#">Classement</a>
+      <a id="apropos" href="#">A propos</a>
+      <div class="id">
+        <p>NOM DU JOUEUR</p>
+        <a class="connection" href="../index.html">Connection</a>
+        <a class="connection" href="#">Déonnection</a>
+      </div>
+      
+      <a href="../partie/partie.html" class="partie_temporaire">Partie en cours</a> <!--temporaire -->
+      
+      <div id="footer">
+        <p><strong>Kévin Beaupuy, Florian Bueno, Clément Fougerouse, Baptiste Rivière &copy; </strong></p>
+        <p>Décembre 2021-Janvier 2022</p>
+      </div>
     </div>
-    <div class="log">
+    
+    <div id="container">
+      <button>Nouvelle partie</button>
+      <button>Contre un adversaire aléatoire
+      <button>Contre un amis</button>
 
-
+      <button>Charger une partie</button>
     </div>
-    <div class="Pied_de_page">
-      <p><strong>Kévin Beaupuy, Florian Bueno, Clément Fougerouse, Baptiste Rivière &copy; </strong>Décembre 2021-Janvier 2022</p>
-    </div>
-    <p> </p>
   </body>
 </html>
