@@ -69,7 +69,7 @@ function MAJ($cote) {
   L'adversaire a joué, on veut renvoyer le tour et le trait maj,
   le coup de l'adversaire ainsi que les coups possibles désormais
   */
-  $retour = array('coups' => []);
+  $retour = array("coups" => [],"vues"=>[]);
   // on récupère la nouvelle disposition sur la base de données
   $partie = $_GET['partie'];
   $requete_plateau = "SELECT plateau FROM parties WHERE id = $partie";
@@ -83,7 +83,18 @@ function MAJ($cote) {
       if ($piece[1] == $cote) { // on ne prend que celles du côté du joueur courant
         // on va alors calculer les possibilités de chaque pièce selon sa valeur
         if ($piece[0] == 'P') {
-          $retour["coups"] = array_merge($retour["coups"],pion($piece,$plateau,$cote,$retour));
+          $retour_pion = pion($piece,$plateau,$cote,$retour);
+          $retour["coups"] = array_merge($retour["coups"],$retour_pion["coups"]);
+          $retour["vues"] = array_merge($retour["vues"],$retour_pion["vues"]);
+        } else if ($piece[0] == 'F') {
+          $retour_fou = fou($piece,$plateau,$cote,$retour);
+          $retour["coups"] = array_merge($retour["coups"],$retour_fou["coups"]);
+        } else if ($piece[0] == 'T') {
+          $retour_tour = tour($piece,$plateau,$cote,$retour);
+          $retour["coups"] = array_merge($retour["coups"],$retour_tour["coups"]);
+        } else if ($piece[0] == 'D') {
+          $retour_dame = dame($piece,$plateau,$cote,$retour);
+          $retour["coups"] = array_merge($retour["coups"],$retour_dame["coups"]);
         }
       }
     }
@@ -94,44 +105,113 @@ function MAJ($cote) {
 }
 
 function pion($piece,$plateau,$cote) {
-  $coups_possibles = array();
+  $coups_par_pion = array();
+  $vues_par_pion = array();
   $i_p = $plateau[$piece]["i"]; // on récupère la coord i du pion
   $j_p = $plateau[$piece]["j"]; // et sa coordonnée j
-
+  // on va tester la couleur du pion
   if ($cote == 1) { // s'il s'agit d'un pion blanc
     $sens = +1; // on va 'avancer' dans le sens i positif
   } else { // si on est du côté des noirs
     $sens = -1; // on va 'avancer' dans le sens i négatif
   }
-
+  // on va parcourir les deux cases devant le pion
   foreach (array($i_p+1*$sens,$i_p+2*$sens) as $i_expl) { // on teste les cases devant le pion
-    if (occupee($plateau,$i_expl,$j_p) == false) { // s'il n'y a rien sur le chemin
-      $coups_possibles[] = [$i_p,$j_p,$i_expl,$j_p];
-    } else if (($i_expl==1 && $cote==1) || ($i_expl==8 && $cote==2)) { // promotion !!!
-      $coups_possibles[] = [$i_p,$j_p,$i_expl,$j_p,"promotion"];
-    } else {
-      break; // si on rencontre un obstacle on coupe la trajectoire
+    $occupee = occupee($plateau,$i_expl,$j_p);
+    if ($occupee == false) { // s'il n'y a rien sur le chemin
+      $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p];
+    } else if (($i_expl==1 && $cote==1) || ($i_expl==8 && $cote==2)) { // promotion
+      // on ajoute les 4 promotions possibles
+      $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,"F"];
+      $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,"T"];
+      $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,"R"];
+      $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,"D"];
+    } else { // si on rencontre un obstacle
+      if ($occupee[1]!=$cote) { // si l'obstacle n'est pas de la couleur du joueur
+        $vues_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,$occupee[0]]; // on enregistre cet obstacle dans la valeur "vues"
+      }
+      break; // puis on coupe la trajectoire
     }
   }
-
   // puis on teste les cases en diagonale
   foreach (array($j_p-1,$j_p+1) as $j_expl) {
     $occupee = occupee($plateau,$i_p+1*$sens,$j_expl);
     if ($occupee != false) { // s'il y a bien une pièce sur cette case
       if ($occupee[1]!=$cote) { // et si elle n'est pas de la couleur du joueur
-        $coups_possibles[] = [$i_p,$j_p,$i_p+1,$j_expl,$occupee[0]];
+        $coups_par_pion[] = [$i_p,$j_p,$i_p+1,$j_expl,$occupee[0]];
       }
     }
   }
+  // on renvoie alors le résultat
+  return array("coups"=>$coups_par_pion,"vues"=>$vues_par_pion);
+}
 
-  return $coups_possibles;
+
+function fou($piece,$plateau,$cote) {
+  $coups_par_fou = array();
+  // on va parcourir les cases en diagonale
+  foreach (array(array(-1,-1),array(+1,-1),array(-1,+1),array(+1,+1)) as $direction) {
+    // on a 4 directions disponibles à tester
+    $coups_par_fou = array_merge($coups_par_fou,explore_direction($direction,$plateau,$cote,$piece));
+  }
+  return array("coups"=>$coups_par_fou); // on renvoie alors le résultat
+}
+
+
+function tour($piece,$plateau,$cote) {
+  $coups_par_tour = array();
+  // on va parcourir les cases atteintes par la tour
+  foreach (array(array(-1,0),array(+1,0),array(0,-1),array(0,+1)) as $direction) {
+    // on a 4 directions disponibles
+    $coups_par_tour = array_merge($coups_par_tour,explore_direction($direction,$plateau,$cote,$piece));
+  }
+  return array("coups"=>$coups_par_tour); // on renvoie alors le résultat
+}
+
+function dame($piece,$plateau,$cote) {
+  $coups_par_dame = array();
+  // on va parcourir les cases atteintes par la tour
+  foreach (array(array(-1,0),array(+1,0),array(0,-1),array(0,+1),array(-1,-1),array(+1,-1),array(-1,+1),array(+1,+1)) as $direction) {
+    // on a 8 directions disponibles
+    $coups_par_dame = array_merge($coups_par_dame,explore_direction($direction,$plateau,$cote,$piece));
+  }
+  return array("coups"=>$coups_par_dame); // on renvoie alors le résultat
+}
+
+
+
+function explore_direction($direction,$plateau,$cote,$piece) {
+  /*
+  simule l'exploration d'un fou, d'une tour ou d'une dame.
+  Pour cela, prend en entrée la direction choisie, le pateau, le coté et la pièce de base
+  Renvoie la liste des coups possibles par la pièce dans cette direction
+  */
+  $i = $plateau[$piece]["i"];
+  $j = $plateau[$piece]["j"];
+  $coups_par_piece_dans_direction = array();
+  for ($incr=1;$incr<8;$incr++) { // on incrémente d'une case
+    $i_expl = $i + $incr*$direction[0];
+    $j_expl = $j + $incr*$direction[1];
+    $occupee = occupee($plateau,$i_expl,$j_expl);
+    if (($i_expl==0)||($i_expl==9)||($j_expl==0)||($j_expl==9)) { // s'il n'y a rien sur le chemin
+      break; // si on dépasse du bord on coupe la trajectoire dans cette direction
+    } else if ($occupee == false) {
+      $coups_par_piece_dans_direction[] = [$i,$j,$i_expl,$j_expl];
+    } else { // si on rencontre un obstacle
+      if ($occupee[1]!=$cote) { // si l'obstacle n'est pas de la couleur du joueur
+        $coups_par_piece_dans_direction[] = [$i,$j,$i_expl,$j_expl,$occupee[0]]; // le fou peut prendre la pièce
+      }
+      break; // puis on coupe la trajectoire dans cette direction
+    }
+  }
+  return $coups_par_piece_dans_direction;
 }
 
 
 function occupee($plateau,$i_expl,$j_expl) {
   /*
-  fonction permettant de tester si une position donnée sur un plateau donné
-  est occupée par une pièce
+  fonction permettant de tester si une position donnée sur un plateau donné est occupée par une pièce
+  renvoie false si non, renvoie la pièce en question si oui
   */
   foreach ($plateau as $piece_testee => $coord_testes) { // on parcourt toutes les pièces
     $i_teste = $coord_testes["i"]; // récupération coordonnée i
