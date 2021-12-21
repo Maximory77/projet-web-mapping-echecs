@@ -53,7 +53,7 @@ if ($result = mysqli_query($link,$requete)) {
           echo json_encode(array('erreur' => "aucune des situations ne correspond"));
         }
       } else { // si on n'est pas à jour c'est que l'adversaire a joué => MAJ
-        MAJ();
+        MAJ($cote);
       }
     } else {
       echo json_encode(array('erreur' => "Le joueur ne correspond pas au côté en entrée."));
@@ -64,31 +64,86 @@ if ($result = mysqli_query($link,$requete)) {
 }
 
 
-function MAJ() {
-
+function MAJ($cote) {
+  /*
+  L'adversaire a joué, on veut renvoyer le tour et le trait maj,
+  le coup de l'adversaire ainsi que les coups possibles désormais
+  */
+  $retour = array('coups' => []);
   // on récupère la nouvelle disposition sur la base de données
   $partie = $_GET['partie'];
   $requete_plateau = "SELECT plateau FROM parties WHERE id = $partie";
   $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
   if ($result = mysqli_query($link,$requete_plateau)) {
-
-    //$json = mysqli_fetch_assoc($result)['plateau'];
-    //echo $plateau;
-
-    $json = '{"P11":{"i":1,"j":1},"R1":{"i":1,"j":2},"P22":{"i":7,"j":2},"R2":{"i":8,"j":4}}';
-    //$json = '{"a":1,"b":2,"c":3,"d":4,"e":5}';
-    $aa = json_decode($json,true);
-    echo $aa["P11"]["i"];
-
-    /*
-    var $test = json_decode($json,true);
-    echo $test["P11"];
-    */
+    $plateau = json_decode(mysqli_fetch_assoc($result)['plateau'],true);
+    //echo $plateau["R1"]["j"];
+    // on parcourt toutes les pièces de la couleur du joueur et on ajoute
+    // les possibilités dans la liste des possibilités
+    foreach ($plateau as $piece => $position) { // on parcourt toutes les pièces
+      if ($piece[1] == $cote) { // on ne prend que celles du côté du joueur courant
+        // on va alors calculer les possibilités de chaque pièce selon sa valeur
+        if ($piece[0] == 'P') {
+          $retour["coups"] = array_merge($retour["coups"],pion($piece,$plateau,$cote,$retour));
+        }
+      }
+    }
+    echo json_encode($retour);
   } else {
-    echo "pb";
+    echo json_encode(array("erreur" => "Erreur de requête de base de données."));
   }
 }
 
+function pion($piece,$plateau,$cote) {
+  $coups_possibles = array();
+  $i_p = $plateau[$piece]["i"]; // on récupère la coord i du pion
+  $j_p = $plateau[$piece]["j"]; // et sa coordonnée j
+
+  if ($cote == 1) { // s'il s'agit d'un pion blanc
+    $sens = +1; // on va 'avancer' dans le sens i positif
+  } else { // si on est du côté des noirs
+    $sens = -1; // on va 'avancer' dans le sens i négatif
+  }
+
+  foreach (array($i_p+1*$sens,$i_p+2*$sens) as $i_expl) { // on teste les cases devant le pion
+    if (occupee($plateau,$i_expl,$j_p) == false) { // s'il n'y a rien sur le chemin
+      $coups_possibles[] = [$i_p,$j_p,$i_expl,$j_p];
+    } else if (($i_expl==1 && $cote==1) || ($i_expl==8 && $cote==2)) { // promotion !!!
+      $coups_possibles[] = [$i_p,$j_p,$i_expl,$j_p,"promotion"];
+    } else {
+      break; // si on rencontre un obstacle on coupe la trajectoire
+    }
+  }
+
+  // puis on teste les cases en diagonale
+  foreach (array($j_p-1,$j_p+1) as $j_expl) {
+    $occupee = occupee($plateau,$i_p+1*$sens,$j_expl);
+    if ($occupee != false) { // s'il y a bien une pièce sur cette case
+      if ($occupee[1]!=$cote) { // et si elle n'est pas de la couleur du joueur
+        $coups_possibles[] = [$i_p,$j_p,$i_p+1,$j_expl,$occupee[0]];
+      }
+    }
+  }
+
+  return $coups_possibles;
+}
+
+
+function occupee($plateau,$i_expl,$j_expl) {
+  /*
+  fonction permettant de tester si une position donnée sur un plateau donné
+  est occupée par une pièce
+  */
+  foreach ($plateau as $piece_testee => $coord_testes) { // on parcourt toutes les pièces
+    $i_teste = $coord_testes["i"]; // récupération coordonnée i
+    $j_teste = $coord_testes["j"]; // et j
+    if (($i_expl==$i_teste) && ($j_expl==$j_teste)) {
+      // si elle correspond aux coordonnées explorées
+      // on coupe la fonction et on renvoie la pièce rencontrée
+      return $piece_testee;
+    }
+  }
+  return false;
+}
 
 
 ?>
