@@ -95,6 +95,9 @@ function MAJ($cote) {
         } else if ($piece[0] == 'D') {
           $retour_dame = dame($piece,$plateau,$cote,$retour);
           $retour["coups"] = array_merge($retour["coups"],$retour_dame["coups"]);
+        } else if ($piece[0] == 'C') {
+          $retour_cavalier = cavalier($piece,$plateau,$cote,$retour);
+          $retour["coups"] = array_merge($retour["coups"],$retour_cavalier["coups"]);
         }
       }
     }
@@ -147,6 +150,30 @@ function pion($piece,$plateau,$cote) {
 }
 
 
+function cavalier($piece,$plateau,$cote) {
+  $coups_par_cavalier = array();
+  $i_c = $plateau[$piece]["i"];
+  $j_c = $plateau[$piece]["j"];
+  // on va parcourir les cases atteintes par le cavalier
+  foreach(array(array($i_c-1,$j_c-2),array($i_c+1,$j_c-2),array($i_c+2,$j_c-1),
+                array($i_c+2,$j_c+1),array($i_c+1,$j_c+2),array($i_c-1,$j_c+2),
+                array($i_c-2,$j_c+1),array($i_c-2,$j_c-1)) as $coord_expl) {
+    $i_expl = $coord_expl[0];
+    $j_expl = $coord_expl[1];
+    if (!(($i_expl<=0)||($i_expl>=9)||($j_expl<=0)||($j_expl>=9))) { // si la case explorée est bien sur l'échiquier
+      $occupee = occupee($plateau,$i_expl,$j_expl); // on recherche si elle est occupée
+      if ($occupee == false) { // s'il n'y a rien sur cette case
+        $coups_par_cavalier[] = [$i_c,$j_c,$i_expl,$j_expl];
+      } else { // si on rencontre un obstacle
+        if ($occupee[1]!=$cote) { // si l'obstacle n'est pas de la couleur du joueur
+          $coups_par_cavalier[] = [$i_c,$j_c,$i_expl,$j_expl,$occupee[0]]; // la pièce peut prendre celle sur la case explorée
+        }
+      }
+    }
+  }
+  return array("coups"=>$coups_par_cavalier); // on renvoie alors le résultat
+}
+
 function fou($piece,$plateau,$cote) {
   $coups_par_fou = array();
   // on va parcourir les cases en diagonale
@@ -168,6 +195,7 @@ function tour($piece,$plateau,$cote) {
   return array("coups"=>$coups_par_tour); // on renvoie alors le résultat
 }
 
+
 function dame($piece,$plateau,$cote) {
   $coups_par_dame = array();
   // on va parcourir les cases atteintes par la tour
@@ -177,8 +205,6 @@ function dame($piece,$plateau,$cote) {
   }
   return array("coups"=>$coups_par_dame); // on renvoie alors le résultat
 }
-
-
 
 function explore_direction($direction,$plateau,$cote,$piece) {
   /*
@@ -192,16 +218,18 @@ function explore_direction($direction,$plateau,$cote,$piece) {
   for ($incr=1;$incr<8;$incr++) { // on incrémente d'une case
     $i_expl = $i + $incr*$direction[0];
     $j_expl = $j + $incr*$direction[1];
-    $occupee = occupee($plateau,$i_expl,$j_expl);
-    if (($i_expl==0)||($i_expl==9)||($j_expl==0)||($j_expl==9)) { // s'il n'y a rien sur le chemin
+    if (($i_expl<=0)||($i_expl>=9)||($j_expl<=0)||($j_expl>=9)) {
       break; // si on dépasse du bord on coupe la trajectoire dans cette direction
-    } else if ($occupee == false) {
-      $coups_par_piece_dans_direction[] = [$i,$j,$i_expl,$j_expl];
-    } else { // si on rencontre un obstacle
-      if ($occupee[1]!=$cote) { // si l'obstacle n'est pas de la couleur du joueur
-        $coups_par_piece_dans_direction[] = [$i,$j,$i_expl,$j_expl,$occupee[0]]; // le fou peut prendre la pièce
+    } else { // si la case est bien sur l'échiquier
+      $occupee = occupee($plateau,$i_expl,$j_expl); // on recherche si elle est occupée
+      if ($occupee == false) { // s'il n'y a rien sur cette case
+        $coups_par_piece_dans_direction[] = [$i,$j,$i_expl,$j_expl];
+      } else { // si on rencontre un obstacle
+        if ($occupee[1]!=$cote) { // si l'obstacle n'est pas de la couleur du joueur
+          $coups_par_piece_dans_direction[] = [$i,$j,$i_expl,$j_expl,$occupee[0]]; // la pièce peut prendre celle sur la case explorée
+        }
+        break; // puis on coupe la trajectoire dans cette direction
       }
-      break; // puis on coupe la trajectoire dans cette direction
     }
   }
   return $coups_par_piece_dans_direction;
