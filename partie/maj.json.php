@@ -35,101 +35,97 @@ $cote = $_GET['cote'];
 $tour = $_GET['tour'];
 $trait = $_GET['trait'];
 
-// on effectue toutes les vérifications avant de répartir la tache vers différentes fonctions selon le cas
+// on effectue toutes les vérifications avant de répartir la tache vers les différentes fonctions selon le cas
 $requete = "SELECT j1,j2,tour,trait FROM parties WHERE id = $partie";
-if ($result = mysqli_query($link,$requete)) {
-  while ($ligne = mysqli_fetch_assoc($result)) {
-    // on vérifie que le joueur correspond au bon côté
-    if (($id_joueur==$ligne['j1'] AND $cote==2) OR ($id_joueur==$ligne['j2'] AND $cote==1)){
-      // on vérifie que la partie en est au stade indiqué par les param "tour" et "trait"
-      if ($tour==$ligne['tour'] AND $trait==$ligne['trait']) { // A JOUR
-        // si on est à jour c'est qu'on veut jouer ou que c'est encore à l'adversaire de jouer
-        if (isset($_GET['coup'])) { // le client a lancé un coup
-          $coup = $_GET['coup'];
-          echo "on a joué";
-        } else if ($cote!=$ligne['trait']) { // si on attend le coup de l'adversaire
-          echo json_encode(array('ras' => 1));
-        } else {
-          echo json_encode(array('erreur' => "aucune des situations ne correspond"));
-        }
-      } else { // si on n'est pas à jour c'est que l'adversaire a joué => MAJ
-        MAJ($cote);
+if ($result_BDD = mysqli_query($link,$requete)) {
+  $resultat = mysqli_fetch_assoc($result_BDD);
+  // on vérifie que le joueur correspond au bon côté
+  if (($id_joueur==$resultat['j1'] AND $cote==2) OR ($id_joueur==$resultat['j2'] AND $cote==1)) {
+    // on vérifie que la partie en est au stade indiqué par les param "tour" et "trait"
+    if ($tour==$resultat['tour'] AND $trait==$resultat['trait']) { // A JOUR
+      // si on est à jour c'est qu'on veut jouer ou que c'est encore à l'adversaire de jouer
+      if (isset($_GET['coup'])) { // le client a lancé un coup
+        $coup = $_GET['coup'];
+        echo "on a joué";
+        /*
+          - MAJ plateau sur la BDD
+          - MAJ histo
+          - enlever pion mort (null ?)
+          - gérer la promotion
+          - gérer l'arbitrage si roi bouge sur case impossible
+          - gérer demande abandon joueur
+          - renvoyer confirmation
+        */
+      } else if ($cote!=$resultat['trait']) { // si on attend le coup de l'adversaire
+        echo json_encode(array('ras' => 1));
+      } else {
+        echo json_encode(array('erreur' => "aucune des situations ne correspond"));
       }
-    } else {
-      echo json_encode(array('erreur' => "Le joueur ne correspond pas au côté en entrée."));
+    } else { // si on n'est pas à jour c'est que l'adversaire a joué => MAJ
+      MAJ();
+      /*
+      - MAJ $histo => enlever parties2 quand ça sera bon
+      - gérer cas du début (mettre cas en plus avec isset c'est ok)
+      - gérer demande abandon adv
+      */
     }
+  } else {
+    echo json_encode(array('erreur' => "Le joueur ne correspond pas au côté en entrée."));
   }
 } else {
   echo json_encode(array('erreur' => "Erreur de requête de base de données."));
 }
 
 
-function MAJ($cote) {
+function MAJ() {
   /*
-  L'adversaire a joué, on veut renvoyer le tour et le trait maj,
-  le coup de l'adversaire ainsi que les coups possibles désormais
+  L'adversaire a joué, on veut renvoyer le coup de l'adversaire selon sa visibilité
+  ainsi que les coups possibles par le joueur et les cases vues
   */
-  $retour = array("coups" => [],"vues"=>[],"il_joue" => [0,0,0,0]);
-  // on récupère la nouvelle disposition sur la base de données
-  $partie = $_GET['partie'];
-  $requete_plateau = "SELECT plateau FROM parties WHERE id = $partie";
+  $retour = array("coups" => [],"vues"=>[],"il_joue" => [0,0,0,0]); // initilialisation de l'entité envoyé en retour
   $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
-  if ($result = mysqli_query($link,$requete_plateau)) {
-    $plateau = json_decode(mysqli_fetch_assoc($result)['plateau'],true);
-    // on parcourt toutes les pièces de la couleur du joueur et on ajoute
-    // les possibilités dans la liste des possibilités
-    foreach ($plateau as $piece => $position) { // on parcourt toutes les pièces
-      if ($piece[1] == $cote) { // on ne prend que celles du côté du joueur courant
-        // on va alors calculer les possibilités de chaque pièce selon sa valeur
-        if ($piece[0] == 'P') { // il s'agit d'un pion
-          $retour_pion = pion($piece,$plateau,$cote,$retour);
-          $retour["coups"] = array_merge($retour["coups"],$retour_pion["coups"]);
-          $retour["vues"] = array_merge($retour["vues"],$retour_pion["vues"]);
-        } else if ($piece[0] == 'F') { // il s'agit d'un fou
-          $retour_fou = fou($piece,$plateau,$cote,$retour);
-          $retour["coups"] = array_merge($retour["coups"],$retour_fou["coups"]);
-        } else if ($piece[0] == 'T') { // il s'agit d'une tour
-          $retour_tour = tour($piece,$plateau,$cote,$retour);
-          $retour["coups"] = array_merge($retour["coups"],$retour_tour["coups"]);
-        } else if ($piece[0] == 'D') { // il s'agit de la dame
-          $retour_dame = dame($piece,$plateau,$cote,$retour);
-          $retour["coups"] = array_merge($retour["coups"],$retour_dame["coups"]);
-        } else if ($piece[0] == 'C') { // il s'agit d'un cavalier
-          $retour_cavalier = cavalier($piece,$plateau,$cote,$retour);
-          $retour["coups"] = array_merge($retour["coups"],$retour_cavalier["coups"]);
-        } else { // il s'agit du roi
-          $retour_roi = roi($piece,$plateau,$cote,$retour);
-          $retour["coups"] = array_merge($retour["coups"],$retour_roi["coups"]);
-        }
-      }
-    }
 
+  // on met à jour les coups et les vues dans l'array $retour
+  $retour = set_coups_vues($retour,$link);
 
-    // on va alors préparer la partie de la réponse correspondant au coup joué par l'adversaire "il_joue"
-    $requete_histos = "SELECT histo1,histo2 FROM parties WHERE id = $partie";
-    if ($result_histos = mysqli_query($link,$requete_histos)) {
-      // récupération des historiques des joueurs
-      $histos = mysqli_fetch_assoc($result_histos);
-      if ($cote == 1) {
-        $histo_joueur = json_decode($histos['histo1'],true);
-        $histo_adv = json_decode($histos['histo2'],true);
-      } else {
-        $histo_joueur = json_decode($histos['histo2'],true);
-        $histo_adv = json_decode($histos['histo1'],true);
-      }
-      // récupération des coordonnées du dernier coup de l'adversaire
-      $coords_coup_adv = end($histo_adv["histo"])["je_joue"];
-      // on teste alors si on peut ajouter les coordonnées et la nature ou si elles restent cachées
-      $retour = verif_coords_depart_vues($histo_joueur,$histo_adv,$coords_coup_adv,$retour);
-      $retour = verif_coords_fin_vues($coords_coup_adv,$retour,$plateau);
+  // on va ensuite préparer la partie de la réponse correspondant au coup joué par l'adversaire "il_joue"
+  $partie = $_GET['partie'];
+  $requete_histos = "SELECT histo1,histo2 FROM parties WHERE id = $partie";
+  if ($result_histos = mysqli_query($link,$requete_histos)) {
 
+    // récupération des historiques des joueurs
+    $histos = mysqli_fetch_assoc($result_histos);
+    if ($cote == 1) {
+      $cle_histo_joueur = 'histo1';
+      $cle_histo_adv = 'histo2';
     } else {
-      echo json_encode(array("erreur" => "Erreur de requête de base de données."));
+      $cle_histo_joueur = 'histo2';
+      $cle_histo_adv = 'histo1';
     }
+    $histo_joueur = json_decode($histos[$cle_histo_joueur],true);
+    $histo_adv = json_decode($histos[$cle_histo_adv],true);
+    // récupération des coordonnées du dernier coup de l'adversaire
 
-    echo json_encode($retour);
+    $coords_coup_adv = end($histo_adv["histo"])["je_joue"];
+
+    // on teste alors si on peut ajouter les coordonnées et la nature ou si elles restent cachées
+    $retour = verif_coords_depart_vues($histo_joueur,$histo_adv,$coords_coup_adv,$retour);
+    $retour = verif_coords_fin_vues($coords_coup_adv,$retour,$plateau);
+
   } else {
-    echo json_encode(array("erreur" => "Erreur de requête de base de données."));
+    echo json_encode(array("erreur" => "Erreur de requete de base de donnees."));
+  }
+
+
+  // on met à jour la colonne histo du joueur dans la base de données
+  $histo_joueur[] = $retour;
+  $histo_joueur_MAJ_str = strval(json_encode($histo_joueur));
+  echo $histo_joueur_MAJ_str;
+  $requete_MAJ_histo = "UPDATE parties2 SET $cle_histo_joueur = '$histo_joueur_MAJ_str' WHERE id = $partie";
+  if ($result_histos = mysqli_query($link,$requete_MAJ_histo)) {
+    echo json_encode($retour); // s'il n'y a pas d'erreur on peut renvoyer le json
+  } else {
+    echo json_encode(array("erreur" => "Erreur de requete de base de donnees."));
   }
 }
 
@@ -188,6 +184,52 @@ function verif_coords_fin_vues($coords_coup_adv,$retour,$plateau) {
     }
   }
   return $retour;
+}
+
+
+function set_coups_vues($retour,$link) {
+  /*
+  permet de mettre à jour l'array $retour, notamment les listes de coordonnées de clés 'coups' et 'vues'
+  Pour cela on va parcourir toutes les pièces du joueur
+  retourne $retour mis à jour
+  */
+  $partie = $_GET['partie'];
+  $cote = $_GET['cote'];
+  // on récupère la nouvelle disposition sur la base de données
+  $requete_plateau = "SELECT plateau FROM parties WHERE id = $partie";
+  if ($result_BDD_plateau = mysqli_query($link,$requete_plateau)) {
+    $plateau = json_decode(mysqli_fetch_assoc($result_BDD_plateau)['plateau'],true);
+    // on parcourt toutes les pièces de la couleur du joueur
+    // et on ajoute les possibilités dans la liste des possibilités
+    foreach ($plateau as $piece => $position) { // on parcourt toutes les pièces
+      if ($piece[1] == $cote) { // on ne prend que celles du côté du joueur courant
+        // on va alors calculer les possibilités de chaque pièce selon sa valeur
+        if ($piece[0] == 'P') { // il s'agit d'un pion
+          $retour_pion = pion($piece,$plateau,$cote,$retour);
+          $retour["coups"] = array_merge($retour["coups"],$retour_pion["coups"]);
+          $retour["vues"] = array_merge($retour["vues"],$retour_pion["vues"]);
+        } else if ($piece[0] == 'F') { // il s'agit d'un fou
+          $retour_fou = fou($piece,$plateau,$cote,$retour);
+          $retour["coups"] = array_merge($retour["coups"],$retour_fou["coups"]);
+        } else if ($piece[0] == 'T') { // il s'agit d'une tour
+          $retour_tour = tour($piece,$plateau,$cote,$retour);
+          $retour["coups"] = array_merge($retour["coups"],$retour_tour["coups"]);
+        } else if ($piece[0] == 'D') { // il s'agit de la dame
+          $retour_dame = dame($piece,$plateau,$cote,$retour);
+          $retour["coups"] = array_merge($retour["coups"],$retour_dame["coups"]);
+        } else if ($piece[0] == 'C') { // il s'agit d'un cavalier
+          $retour_cavalier = cavalier($piece,$plateau,$cote,$retour);
+          $retour["coups"] = array_merge($retour["coups"],$retour_cavalier["coups"]);
+        } else { // il s'agit d'un roi
+          $retour_roi = roi($piece,$plateau,$cote,$retour);
+          $retour["coups"] = array_merge($retour["coups"],$retour_roi["coups"]);
+        }
+      }
+    }
+    return $retour;
+  } else {
+    echo json_encode(array("erreur" => "Erreur de requete de base de donnees."));
+  }
 }
 
 
