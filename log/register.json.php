@@ -8,19 +8,15 @@ if (!$link) {
 } else {
 }
 
-//Prévention de potentiels problèmes d'encodages
-mysqli_set_charset($link, "utf8");
+
+$nom = $_POST['nom'];
+$mdp = $_POST['mdp'];
+$mail = $_POST['mail'];
 
 
-$requete = "SELECT * FROM login";
-$tab=[];
-if($result=mysqli_query($link,$requete)){
-  while($ligne=mysqli_fetch_assoc($result)){
-    //tableau associatif
-    $tab[]=$ligne;
-  }
-}
-echo json_encode($tab);
+$requete = "INSERT INTO login VALUES ('$nom', '$mdp', '$mail')";
+
+mysqli_query($link, $requete);
 
 
 ?>
