@@ -69,7 +69,7 @@ function MAJ($cote) {
   L'adversaire a joué, on veut renvoyer le tour et le trait maj,
   le coup de l'adversaire ainsi que les coups possibles désormais
   */
-  $retour = array("coups" => [],"vues"=>[]);
+  $retour = array("coups" => [],"vues"=>[],"il_joue" => [0,0,0,0]);
   // on récupère la nouvelle disposition sur la base de données
   $partie = $_GET['partie'];
   $requete_plateau = "SELECT plateau FROM parties WHERE id = $partie";
@@ -104,12 +104,13 @@ function MAJ($cote) {
       }
     }
 
-    // on va alors préparer la partie de la réponse correspondant au coup joué par l'adversaire
+
+    // on va alors préparer la partie de la réponse correspondant au coup joué par l'adversaire "il_joue"
     $requete_histos = "SELECT histo1,histo2 FROM parties WHERE id = $partie";
     if ($result_histos = mysqli_query($link,$requete_histos)) {
       // récupération des historiques des joueurs
       $histos = mysqli_fetch_assoc($result_histos);
-      if ($cote == 2) {
+      if ($cote == 1) {
         $histo_joueur = json_decode($histos['histo1'],true);
         $histo_adv = json_decode($histos['histo2'],true);
       } else {
@@ -118,24 +119,77 @@ function MAJ($cote) {
       }
       // récupération des coordonnées du dernier coup de l'adversaire
       $coords_coup_adv = end($histo_adv["histo"])["je_joue"];
-      // si les coordonnées de départ étaient vues par le joueur courant (cr du joueur, dernier coup il_joue)
+      // on teste alors si on peut ajouter les coordonnées et la nature ou si elles restent cachées
+      $retour = verif_coords_depart_vues($histo_joueur,$histo_adv,$coords_coup_adv,$retour);
+      $retour = verif_coords_fin_vues($coords_coup_adv,$retour,$plateau);
+
     } else {
       echo json_encode(array("erreur" => "Erreur de requête de base de données."));
     }
 
-    // => on les met [i_adv_dep,j_adv_dep,?,?], sinon [0,0,?,?]
-    // si les coordonnées d'arrivée sont actuellement visibles (voir avec $plateau courant)
-    // => on les met [?,?,i_adv_arr,j_adv,arr,"X"], sinon [?,?,0,0]
-    // + ajouter nature si on voit la pièce
-
-
-
-
-    //echo json_encode($retour);
+    echo json_encode($retour);
   } else {
     echo json_encode(array("erreur" => "Erreur de requête de base de données."));
   }
 }
+
+
+function verif_coords_depart_vues($histo_joueur,$histo_adv,$coords_coup_adv,$retour) {
+  /*
+  vérifie si la position de départ de coup joué par l'adversaire est visible par le joueur,
+  renvoie la variable $retour mise à jour
+  exploration des cases vues par le joeur avant le coup de l'adversaire
+  on va les trouver dans le dernier "je_joue" avec la clé vue (cases vues après le coup du joeur)
+  et dans le dernier "il_joue" avec les clés coups (toutes les possibilités) et "vues" (pieces blaquant les pions)
+  */
+  foreach(array(array(1,"vues"),array(2,"vues"),array(2,"coups")) as $explore_histo) {
+    $i = $explore_histo[0]; // 1 correspond à n-1, c'est à dire le dernier élément de la liste histo, 2 correspond à l'avant dernier élément
+    $cle = $explore_histo[1]; // correspond à "vues" ou "coups"
+    $vues_par_joueur = $histo_joueur["histo"][count($histo_joueur["histo"])-$i][$cle];
+    if (isset($vues_par_joueur)) { // on récupère une par une les listes de cases vues par le joueur
+      foreach($vues_par_joueur as $case_exploree) { // on parcourt ces cases
+        if ((($coords_coup_adv[0]==$case_exploree[0]) && ($coords_coup_adv[1]==$case_exploree[1]))
+        || (($cle=="coups") && ($coords_coup_adv[0]==$case_exploree[2]) && ($coords_coup_adv[1]==$case_exploree[3]))) {
+          // si on retrouve les deux mêmes coords, c'est que cette case est vue
+          // s'il s'agit d'une liste "coords" il faut prendre en compte les coords d'index 2 et 3
+          // on peut ajouter les coordonnées au retour
+          $retour["il_joue"][0] = $coords_coup_adv[0];
+          $retour["il_joue"][1] = $coords_coup_adv[1];
+          break 2; // il est alors inutile de parcourir les autres coordonnées
+        }
+      }
+    }
+  }
+  return $retour;
+}
+
+
+function verif_coords_fin_vues($coords_coup_adv,$retour,$plateau) {
+  /*
+  vérifie si la position de fin du coup joué par l'adversaire est visible par le joueur,
+  renvoie la variable $retour mise à jour
+  exploration des cases vues par le joueur au moment courant, calculées dans le retour dans "coups" et "vues"
+  */
+  foreach(array("coups","vues") as $cle) {
+    $vues_par_joueur = $retour[$cle];
+    if (isset($vues_par_joueur)) { // on récupère une par une les listes de cases vues par le joueur actuellement
+      foreach($vues_par_joueur as $case_exploree) { // on parcourt ces cases
+        if ((($coords_coup_adv[2]==$case_exploree[0]) && ($coords_coup_adv[3]==$case_exploree[1]))
+        || (($cle=="coups") && ($coords_coup_adv[2]==$case_exploree[2]) && ($coords_coup_adv[3]==$case_exploree[3]))) {
+          // si on retrouve les deux mêmes coords, c'est que cette case est vue
+          // s'il s'agit d'une liste "coords" il faut prendre en compte les coords d'index 2 et 3
+          // on peut ajouter les coordonnées au retour
+          $retour["il_joue"][2] = $coords_coup_adv[2];
+          $retour["il_joue"][3] = $coords_coup_adv[3];
+          $retour["nature"] = occupee($plateau,$coords_coup_adv[2],$coords_coup_adv[3])[0]; // on ajoute la valeur de la pièce
+          break 2; // il est alors inutile de parcourir les autres coordonnées
+        }
+      }
+    }
+  }
+  return $retour;
+}
+
 
 function pion($piece,$plateau,$cote) {
   $coups_par_pion = array();
@@ -261,6 +315,7 @@ function dame($piece,$plateau,$cote) {
   }
   return array("coups"=>$coups_par_dame); // on renvoie alors le résultat
 }
+
 
 function explore_direction($direction,$plateau,$cote,$piece) {
   /*
