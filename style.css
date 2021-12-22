@@ -22,11 +22,6 @@ body {
 
 #container {
   grid-column: 2;
-
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  grid-template-rows: 5em 1fr 5em;
-
   padding: 2em;
   background-color: rgb(82, 82, 82);
 }
@@ -91,11 +86,6 @@ Menu
   margin-top: 10em;
   background-color: #51ff00; 
 }
-
-/* .menu #apropos {
-  margin-bottom: 0em;
-  flex: end;
-} */
 
 .menu #footer {
   text-align: center;
@@ -163,61 +153,48 @@ Login
 .form .register-form {
   display: none;
 }
-.container {
-  position: relative;
-  z-index: 1;
-  max-width: 300px;
-  margin: 0 auto;
-}
-.container:before, .container:after {
-  content: "";
-  display: block;
-  clear: both;
-}
-.container .info {
-  margin: 50px auto;
-  text-align: center;
-}
-.container .info h1 {
-  margin: 0 0 15px;
-  padding: 0;
-  font-size: 36px;
-  font-weight: 300;
-  color: #1a1a1a;
-}
-.container .info span {
-  color: #4d4d4d;
-  font-size: 12px;
-}
-.container .info span a {
-  color: #000000;
-  text-decoration: none;
-}
-.container .info span .fa {
-  color: #EF3B3A;
-}
-body {
-  font-family: "Roboto", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;      
-}
 
 /*----------------------------------------------------------------------------
 Choix partie
 ----------------------------------------------------------------------------*/
+.choixPartie {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
 
+#nouvellePartieAlea {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+#nouvellePartieAmis {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+#chargerPartie {
+  grid-column: 1/2;
+  grid-row: 2;
+}
+
+/*----------------------------------------------------------------------------
+Regarder
+----------------------------------------------------------------------------*/
+/* .choixPartie {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+} */
 
 /*----------------------------------------------------------------------------
 Jeu
 ----------------------------------------------------------------------------*/
-/* .container .jeu {
+.partie {
   display: grid;
   grid-template-columns: 3fr 1fr;
   grid-template-rows: 5em 1fr 5em;
-
-  padding: 2em;
-  background-color: rgb(82, 82, 82);
-} */
+}
 
 .cimetiere {
   /* background-color: rgb(121, 58, 58); */
@@ -267,7 +244,7 @@ height: 100%;
   background-color:#7c3636;
 }
 .case_blanche_case{
-background-color:#e6e5d0;
+  background-color:#e6e5d0;
 }
 
 
