@@ -165,51 +165,49 @@ Choix partie
   text-align: center;
 }
 
-.choixPartie div {
-  padding: 40px;
+.choixPartie .wrapper-choix {
+  margin: auto;
+  padding: 3em;
   display: flex;
   flex-direction: column;
+  max-width: 25em;
+  max-height: 25em;
 }
 
-/* .choixParti */
+.choixPartie a {
+  text-decoration: none;
+  color:#f2f2f2;
+}
+
+.choixPartie .image-link {
+  width: 80%;
+  /* height: 20em; */
+  margin: auto;
+  /* margin: 10em; */
+  /* max-height: 40vh;
+  object-fit: contain; */
+}
+
+.choixPartie img {
+  width: 80%;
+  height: auto;
+  object-fit: contain;
+}
 
 #nouvellePartieAlea {
   grid-column: 1;
   grid-row: 1;
-  display: flex;
-  flex-direction: column;
-}
-#nouvellePartieAlea img {
-  width: 100%;
-  height: auto;
-  max-height: 40vh;
-  object-fit: contain;
-  padding: 5em;
 }
 
 #nouvellePartieAmis {
   grid-column: 2;
   grid-row: 1;
 }
-#nouvellePartieAmis img {
-  display: block;
-  width: 100%;  
-  height: auto;
-  max-height: 40vh;
-  object-fit: contain;
-}
 
 #chargerPartie {
   grid-column: 1/-1;
   grid-row: 2;
-}
-#chargerPartie img {
-  width: 100%;  
-  height: auto;
-  max-height: 40vh;
-  max-width: 40vh;
-  object-fit: contain;
-  margin: auto;
+  /* margin-left: ; */
 }
 
 /*----------------------------------------------------------------------------
