@@ -48,11 +48,10 @@ if ($result_BDD = mysqli_query($link,$requete)) {
         je_joue();
         /*
           - gérer demande abandon joueur
-          - gérer l'arbitrage si roi bouge sur case impossible
           - enlever pion mort (null ?)
           - gérer la promotion
-          - MAJ histo
           - MAJ plateau sur la BDD
+          - MAJ histo
           - renvoyer confirmation
         */
       } else if ($cote!=$resultat['trait']) { // si on attend le coup de l'adversaire
@@ -75,15 +74,19 @@ if ($result_BDD = mysqli_query($link,$requete)) {
   echo json_encode(array('erreur' => "Erreur de requete de base de donnees 1."));
 }
 
+/*
+Fonctions permettant de mettre en place le coup joué par le joueur
+*/
+
 function je_joue() {
   $i_coup = $_GET['coup']; // récupération de l'indice du coup joué
   $cote = $_GET['cote']; // récupération du côté
   $partie = $_GET['partie'];
   // récupération des historiques des joueurs
   $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
-  $requete_histos = "SELECT histo1,histo2 FROM parties WHERE id = $partie";
-  if ($result_histos = mysqli_query($link,$requete_histos)) {
-    $histos = mysqli_fetch_assoc($result_histos);
+  $requete_je_joue = "SELECT histo1,histo2,plateau FROM parties WHERE id = $partie";
+  if ($result_je_joue = mysqli_query($link,$requete_je_joue)) {
+    $result_je_joue_array = mysqli_fetch_assoc($result_je_joue);
     if ($cote == 1) {
       $cle_histo_joueur = 'histo2';
       $cle_histo_adv = 'histo1';
@@ -91,17 +94,79 @@ function je_joue() {
       $cle_histo_joueur = 'histo1';
       $cle_histo_adv = 'histo2';
     }
-    $histo_joueur = json_decode($histos[$cle_histo_joueur],true);
-    $histo_adv = json_decode($histos[$cle_histo_adv],true);
+    $histo_joueur = json_decode($result_je_joue_array[$cle_histo_joueur],true);
+    $histo_adv = json_decode($result_je_joue_array[$cle_histo_adv],true);
     // récupération des coordonnées du coup fait par le joueur
     $coord_coup_joueur = end($histo_joueur["histo"])["coups"][$i_coup];
+
+    $plateau = json_decode($result_je_joue_array['plateau'],true);
+    // vérification que le roi n'est pas mis en échec
+    $nouveau_plateau = nouveau_plateau($coord_coup_joueur,$plateau,$cote);
+    if ($nouveau_plateau == false) { // si le coup n'est pas valide on renvoie un message d'erreur
+      echo json_encode(array("erreur" => "Coup invalide"));
+    } else { // sinon on a le plateau
+      echo json_encode($coord_coup_joueur);
+    }
   } else {
     echo json_encode(array("erreur" => "Erreur de requete de base de donnees 2."));
   }
-  // on peut récupérer le coup
-
-  echo json_encode($coord_coup_joueur);
 }
+
+
+function nouveau_plateau($coords_coup_joueur,$plateau,$cote) {
+  /*
+  lorsqu'un joueur joue, on cherche à savoir s'il ne met pas son roi en échec et à mettre à jour le plateau
+  renvoie le nouveau plateau si le coup est valide, false sinon
+  */
+  // on récupère le plateau courant et on le modifie en effectuant le coup proposé
+  foreach ($plateau as $piece => $position) {
+    if (($position[$i]==$coords_coup_joueur[0]) && ($position[$j]==$coords_coup_joueur[1])) {
+      $plateau[$piece][$position][$i] = $coords_coup_joueur[2];
+      $plateau[$piece][$position][$j] = $coords_coup_joueur[3];
+      break;
+    }
+  }
+  if (echec_au_roi($plateau,$cote)) { // on vérifie qu'il n'y a pas d'échec au roi
+    return false;
+  } else {
+    return $plateau;
+  }
+}
+
+
+function echec_au_roi($plateau,$cote) {
+  /*
+  on cherche à savoir si le roi du côté $cote est mis en échec
+  renvoie true si oui, false sinon
+  */
+  foreach ($plateau as $piece => $position) { // on parcourt toutes les pièces
+    if ($piece[1] != $cote) { // on ne prend que celles de l'adversaire au joueur de ce côté
+      // on va alors chercher si la pièce peu prendre le roi
+      if ($piece[0] == 'P') { // il s'agit d'un pion
+        $retour_piece = pion($piece,$plateau,$cote);
+      } else if ($piece[0] == 'F') { // il s'agit d'un fou
+        $retour_piece = fou($piece,$plateau,$cote,$retour);
+      } else if ($piece[0] == 'T') { // il s'agit d'une tour
+        $retour_piece = tour($piece,$plateau,$cote,$retour);
+      } else if ($piece[0] == 'D') { // il s'agit de la dame
+        $retour_piece = dame($piece,$plateau,$cote,$retour);
+      } else if ($piece[0] == 'C') { // il s'agit d'un cavalier
+        $retour_piece = cavalier($piece,$plateau,$cote,$retour);
+      } else { // il s'agit d'un roi
+        $retour_piece = roi($piece,$plateau,$cote,$retour);
+      } // on teste si l'un des coups consiste à prendre le roi
+      foreach ($retour_piece["coups"] as $coup) {
+        if (end($coup)=='R') {
+          return false;
+        }
+      }
+    }
+  }
+}
+
+/*
+Fonctions permettant de mettre en place le coup joué par l'adversaire
+*/
 
 function il_joue() {
   /*
@@ -257,6 +322,9 @@ function set_coups_vues($retour,$link) {
   }
 }
 
+/*
+Fonctions utiles
+*/
 
 function pion($piece,$plateau,$cote) {
   $coups_par_pion = array();
@@ -287,7 +355,7 @@ function pion($piece,$plateau,$cote) {
       break; // puis on coupe la trajectoire
     }
   }
-  // puis on teste les cases en diagonale
+  // enfin on teste les cases en diagonale
   foreach (array($j_p-1,$j_p+1) as $j_expl) {
     $occupee = occupee($plateau,$i_p+1*$sens,$j_expl);
     if ($occupee != false) { // s'il y a bien une pièce sur cette case
