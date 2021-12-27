@@ -48,7 +48,6 @@ if ($result_BDD = mysqli_query($link,$requete)) {
         je_joue();
         /*
           - gérer demande abandon joueur
-          - enlever pion mort (null ?)
           - gérer la promotion
           - MAJ plateau sur la BDD
           - MAJ histo
@@ -126,9 +125,29 @@ function nouveau_plateau($coords_coup_joueur,$plateau,$cote) {
       break;
     }
   }
-  if (echec_au_roi($plateau,$cote)) { // on vérifie qu'il n'y a pas d'échec au roi
+  // on supprime les pieces ayant été prises (on leur donne des coordonnées null)
+  foreach ($plateau as $piece => $position) {
+    if (($position[$i]==$coords_coup_joueur[2]) && ($position[$j]==$coords_coup_joueur[3])) {
+      $plateau[$piece][$position][$i] = null;
+      $plateau[$piece][$position][$j] = null;
+      break;
+    }
+  }
+  // on prend en compte les cas exceptionnels
+  if (sizeof($coords_coup_joueur) == 5) {
+    if ($coords_coup_joueur[4] == 'pp') { // on a une prise en passant
+      echo "prise en passant";
+    } else if ($coords_coup_joueur[4] == 'r') { // on a une roque
+      echo "roque"
+    } else { // on a une promotion
+      // on récupère la pièce concernée
+      // et on lui donne une nouvelle valeur
+    }
+  }
+  if (echec_au_roi($plateau,$cote)) { // on vérifie que le joueur ne met pas son roi en echec
     return false;
   } else {
+    // on vérifie qu'il n'y a pas d'échec au roi pour l'adversaire, synonyme de fin de partie
     return $plateau;
   }
 }
@@ -139,9 +158,15 @@ function echec_au_roi($plateau,$cote) {
   on cherche à savoir si le roi du côté $cote est mis en échec
   renvoie true si oui, false sinon
   */
+  foreach ($plateau as $piece => $position) { // on recherche tout d'abord les coordonnées du roi
+    if (($piece[1] == $cote) && ($piece[0] == 'R')) {
+      $i_roi = $position["i"];
+      $j_roi = $position["j"];
+    }
+  }
   foreach ($plateau as $piece => $position) { // on parcourt toutes les pièces
     if ($piece[1] != $cote) { // on ne prend que celles de l'adversaire au joueur de ce côté
-      // on va alors chercher si la pièce peu prendre le roi
+      // on va alors chercher si la pièce peut prendre le roi
       if ($piece[0] == 'P') { // il s'agit d'un pion
         $retour_piece = pion($piece,$plateau,$cote);
       } else if ($piece[0] == 'F') { // il s'agit d'un fou
@@ -156,7 +181,7 @@ function echec_au_roi($plateau,$cote) {
         $retour_piece = roi($piece,$plateau,$cote,$retour);
       } // on teste si l'un des coups consiste à prendre le roi
       foreach ($retour_piece["coups"] as $coup) {
-        if (end($coup)=='R') {
+        if (($coup[2] == $i_roi) && ($coup[3] == $j_roi)) {
           return false;
         }
       }
