@@ -45,15 +45,14 @@ if ($result_BDD = mysqli_query($link,$requete)) {
     if ($tour==$resultat['tour'] AND $trait==$resultat['trait']) { // A JOUR
       // si on est à jour c'est qu'on veut jouer ou que c'est encore à l'adversaire de jouer
       if (isset($_GET['coup'])) { // le client a lancé un coup
-        $coup = $_GET['coup'];
-        echo "on a joué";
+        je_joue();
         /*
-          - MAJ plateau sur la BDD
-          - MAJ histo
+          - gérer demande abandon joueur
+          - gérer l'arbitrage si roi bouge sur case impossible
           - enlever pion mort (null ?)
           - gérer la promotion
-          - gérer l'arbitrage si roi bouge sur case impossible
-          - gérer demande abandon joueur
+          - MAJ histo
+          - MAJ plateau sur la BDD
           - renvoyer confirmation
         */
       } else if ($cote!=$resultat['trait']) { // si on attend le coup de l'adversaire
@@ -62,7 +61,7 @@ if ($result_BDD = mysqli_query($link,$requete)) {
         echo json_encode(array('erreur' => "aucune des situations ne correspond"));
       }
     } else { // si on n'est pas à jour c'est que l'adversaire a joué => MAJ
-      MAJ();
+      il_joue();
       /*
       - MAJ $histo => enlever parties2 quand ça sera bon
       - gérer cas du début (mettre cas en plus avec isset c'est ok)
@@ -73,11 +72,38 @@ if ($result_BDD = mysqli_query($link,$requete)) {
     echo json_encode(array('erreur' => "Le joueur ne correspond pas au côté en entrée."));
   }
 } else {
-  echo json_encode(array('erreur' => "Erreur de requête de base de données."));
+  echo json_encode(array('erreur' => "Erreur de requete de base de donnees 1."));
 }
 
+function je_joue() {
+  $i_coup = $_GET['coup']; // récupération de l'indice du coup joué
+  $cote = $_GET['cote']; // récupération du côté
+  $partie = $_GET['partie'];
+  // récupération des historiques des joueurs
+  $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
+  $requete_histos = "SELECT histo1,histo2 FROM parties WHERE id = $partie";
+  if ($result_histos = mysqli_query($link,$requete_histos)) {
+    $histos = mysqli_fetch_assoc($result_histos);
+    if ($cote == 1) {
+      $cle_histo_joueur = 'histo2';
+      $cle_histo_adv = 'histo1';
+    } else {
+      $cle_histo_joueur = 'histo1';
+      $cle_histo_adv = 'histo2';
+    }
+    $histo_joueur = json_decode($histos[$cle_histo_joueur],true);
+    $histo_adv = json_decode($histos[$cle_histo_adv],true);
+    // récupération des coordonnées du coup fait par le joueur
+    $coord_coup_joueur = end($histo_joueur["histo"])["coups"][$i_coup];
+  } else {
+    echo json_encode(array("erreur" => "Erreur de requete de base de donnees 2."));
+  }
+  // on peut récupérer le coup
 
-function MAJ() {
+  echo json_encode($coord_coup_joueur);
+}
+
+function il_joue() {
   /*
   L'adversaire a joué, on veut renvoyer le coup de l'adversaire selon sa visibilité
   ainsi que les coups possibles par le joueur et les cases vues
@@ -96,16 +122,15 @@ function MAJ() {
     // récupération des historiques des joueurs
     $histos = mysqli_fetch_assoc($result_histos);
     if ($cote == 1) {
-      $cle_histo_joueur = 'histo1';
-      $cle_histo_adv = 'histo2';
-    } else {
       $cle_histo_joueur = 'histo2';
       $cle_histo_adv = 'histo1';
+    } else {
+      $cle_histo_joueur = 'histo1';
+      $cle_histo_adv = 'histo2';
     }
     $histo_joueur = json_decode($histos[$cle_histo_joueur],true);
     $histo_adv = json_decode($histos[$cle_histo_adv],true);
     // récupération des coordonnées du dernier coup de l'adversaire
-
     $coords_coup_adv = end($histo_adv["histo"])["je_joue"];
 
     // on teste alors si on peut ajouter les coordonnées et la nature ou si elles restent cachées
@@ -113,7 +138,7 @@ function MAJ() {
     $retour = verif_coords_fin_vues($coords_coup_adv,$retour,$plateau);
 
   } else {
-    echo json_encode(array("erreur" => "Erreur de requete de base de donnees."));
+    echo json_encode(array("erreur" => "Erreur de requete de base de donnees 3."));
   }
 
 
@@ -125,7 +150,7 @@ function MAJ() {
   if ($result_histos = mysqli_query($link,$requete_MAJ_histo)) {
     echo json_encode($retour); // s'il n'y a pas d'erreur on peut renvoyer le json
   } else {
-    echo json_encode(array("erreur" => "Erreur de requete de base de donnees."));
+    echo json_encode(array("erreur" => "Erreur de requete de base de donnees 4."));
   }
 }
 
@@ -228,7 +253,7 @@ function set_coups_vues($retour,$link) {
     }
     return $retour;
   } else {
-    echo json_encode(array("erreur" => "Erreur de requete de base de donnees."));
+    echo json_encode(array("erreur" => "Erreur de requete de base de donnees 5."));
   }
 }
 

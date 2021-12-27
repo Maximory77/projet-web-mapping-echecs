@@ -47,7 +47,7 @@ if (isset($_GET['partie'])) {
       }
     }
   } else {
-    echo json_encode(array('erreur' => "Erreur de requête de base de données."));
+    echo json_encode(array('erreur' => "Erreur de requete de base de donnees 1."));
   }
 } else {
   echo json_encode(array('erreur' => "Erreur de paramètre en entrée"));;
