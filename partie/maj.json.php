@@ -48,10 +48,9 @@ if ($result_BDD = mysqli_query($link,$requete)) {
         je_joue();
         /*
           - gérer demande abandon joueur
-          - gérer la promotion
+          - gérer la prise en passant et le roque
           - MAJ plateau sur la BDD
           - MAJ histo
-          - renvoyer confirmation
         */
       } else if ($cote!=$resultat['trait']) { // si on attend le coup de l'adversaire
         echo json_encode(array('ras' => 1));
@@ -61,6 +60,7 @@ if ($result_BDD = mysqli_query($link,$requete)) {
     } else { // si on n'est pas à jour c'est que l'adversaire a joué => MAJ
       il_joue();
       /*
+      - gérer la prise en passant et le roque
       - MAJ $histo => enlever parties2 quand ça sera bon
       - gérer cas du début (mettre cas en plus avec isset c'est ok)
       - gérer demande abandon adv
@@ -80,7 +80,7 @@ Fonctions permettant de mettre en place le coup joué par le joueur
 function je_joue() {
   $i_coup = $_GET['coup']; // récupération de l'indice du coup joué
   $cote = $_GET['cote']; // récupération du côté
-  $partie = $_GET['partie'];
+  $partie = $_GET['partie']; // récupération de la partie
   // récupération des historiques des joueurs
   $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
   $requete_je_joue = "SELECT histo1,histo2,plateau FROM parties WHERE id = $partie";
@@ -88,23 +88,37 @@ function je_joue() {
     $result_je_joue_array = mysqli_fetch_assoc($result_je_joue);
     if ($cote == 1) {
       $cle_histo_joueur = 'histo2';
-      $cle_histo_adv = 'histo1';
     } else {
       $cle_histo_joueur = 'histo1';
-      $cle_histo_adv = 'histo2';
     }
     $histo_joueur = json_decode($result_je_joue_array[$cle_histo_joueur],true);
-    $histo_adv = json_decode($result_je_joue_array[$cle_histo_adv],true);
     // récupération des coordonnées du coup fait par le joueur
     $coord_coup_joueur = end($histo_joueur["histo"])["coups"][$i_coup];
-
     $plateau = json_decode($result_je_joue_array['plateau'],true);
-    // vérification que le roi n'est pas mis en échec
-    $nouveau_plateau = nouveau_plateau($coord_coup_joueur,$plateau,$cote);
-    if ($nouveau_plateau == false) { // si le coup n'est pas valide on renvoie un message d'erreur
+    // calcul du nouveau plateau
+    $plateau_MAJ = plateau_MAJ($coord_coup_joueur,$plateau,$cote);
+    if ($plateau_MAJ == false) { // on renvoie un message d'erreur si le coup n'est pas valide (le joueur met son roi en échec)
       echo json_encode(array("erreur" => "Coup invalide"));
-    } else { // sinon on a le plateau
-      echo json_encode($coord_coup_joueur);
+    } else { // sinon on prépare la réponse de confirmation pour le joueur
+      $retour = array("je_joue" => $coord_coup_joueur,"vues" => array());
+      // on calcule les nouvelles cases vues
+      foreach ($plateau_MAJ as $piece => $position) { // on parcourt toutes les pièces
+        $retour_piece = coups_vues_par_piece($piece,$plateau_MAJ,$cote);
+        $retour["vues"] = array_merge($retour["vues"],$retour_piece["coups"]);
+        $retour["vues"] = array_merge($retour["vues"],$retour_piece["vues"]);
+      }
+      // On renvoie au joueur la confirmatin du coup ("je_joue et 'vues'")
+      echo json_encode($retour);
+      // on met à jour l'histo du joueur et le plateau dans la BDD
+      $histo_joueur[] = $retour;
+      $histo_joueur_MAJ_str = strval(json_encode($histo_joueur));
+      $plateau_MAJ_str = strval(json_encode($plateau_MAJ));
+      $requete_MAJ_histo = "UPDATE parties2 SET $cle_histo_joueur = '$histo_joueur_MAJ_str' WHERE id = $partie";
+      if ($result_histos = mysqli_query($link,$requete_MAJ_histo)) {
+        echo json_encode($retour); // s'il n'y a pas d'erreur on peut renvoyer le json
+      } else {
+        echo json_encode(array("erreur" => "Erreur de requete de base de donnees 4."));
+      }
     }
   } else {
     echo json_encode(array("erreur" => "Erreur de requete de base de donnees 2."));
@@ -112,36 +126,35 @@ function je_joue() {
 }
 
 
-function nouveau_plateau($coords_coup_joueur,$plateau,$cote) {
+function plateau_MAJ($coords_coup_joueur,$plateau,$cote) {
   /*
-  lorsqu'un joueur joue, on cherche à savoir s'il ne met pas son roi en échec et à mettre à jour le plateau
+  lorsqu'un joueur joue, on va caluler les modifications sur le plateau
+  on cherche également à savoir s'il ne met pas son roi en échec
   renvoie le nouveau plateau si le coup est valide, false sinon
   */
-  // on récupère le plateau courant et on le modifie en effectuant le coup proposé
-  foreach ($plateau as $piece => $position) {
+  foreach ($plateau as $piece => $position) { // on parcourt chaque pièce du plateau
+    // si la pièce parcourue correspond à la pièce que le joueur veut bouger
     if (($position[$i]==$coords_coup_joueur[0]) && ($position[$j]==$coords_coup_joueur[1])) {
       $plateau[$piece][$position][$i] = $coords_coup_joueur[2];
       $plateau[$piece][$position][$j] = $coords_coup_joueur[3];
-      break;
+      if (sizeof($coords_coup_joueur) == 5) { // si on a un cas exceptionnel
+        if ($coords_coup_joueur[4] == 'pp') { // s'il y a une prise en passant
+          echo "prise en passant";
+        } else { // si on a une promotion on change la valeur de la pièce
+          $plateau[$piece][0] = $coords_coup_joueur[4];
+        }
+      }
     }
-  }
-  // on supprime les pieces ayant été prises (on leur donne des coordonnées null)
-  foreach ($plateau as $piece => $position) {
+    // si la pièce parcourue correspond à la position d'arrivée de la pièce on la supprime en lui donnant des coordonnées null
+    // il s'agit soit d'une pièce adverse soit d'une tour s'il y a roque
     if (($position[$i]==$coords_coup_joueur[2]) && ($position[$j]==$coords_coup_joueur[3])) {
       $plateau[$piece][$position][$i] = null;
       $plateau[$piece][$position][$j] = null;
-      break;
-    }
-  }
-  // on prend en compte les cas exceptionnels
-  if (sizeof($coords_coup_joueur) == 5) {
-    if ($coords_coup_joueur[4] == 'pp') { // on a une prise en passant
-      echo "prise en passant";
-    } else if ($coords_coup_joueur[4] == 'r') { // on a une roque
-      echo "roque"
-    } else { // on a une promotion
-      // on récupère la pièce concernée
-      // et on lui donne une nouvelle valeur
+      if (sizeof($coords_coup_joueur) == 5) { // on a passé un paramètre en plus
+        if ($coords_coup_joueur[4] == 'r') { // il s'agit bien d'un roque
+          echo "roque";
+        }
+      }
     }
   }
   if (echec_au_roi($plateau,$cote)) { // on vérifie que le joueur ne met pas son roi en echec
@@ -231,11 +244,9 @@ function il_joue() {
     echo json_encode(array("erreur" => "Erreur de requete de base de donnees 3."));
   }
 
-
   // on met à jour la colonne histo du joueur dans la base de données
   $histo_joueur[] = $retour;
   $histo_joueur_MAJ_str = strval(json_encode($histo_joueur));
-  echo $histo_joueur_MAJ_str;
   $requete_MAJ_histo = "UPDATE parties2 SET $cle_histo_joueur = '$histo_joueur_MAJ_str' WHERE id = $partie";
   if ($result_histos = mysqli_query($link,$requete_MAJ_histo)) {
     echo json_encode($retour); // s'il n'y a pas d'erreur on peut renvoyer le json
@@ -302,12 +313,14 @@ function verif_coords_fin_vues($coords_coup_adv,$retour,$plateau) {
 }
 
 
+// !!!!!!!!!!!!!!!!!! au cas où !!!!!!!!!!!!!!!!!!!!!!!!
+/*
 function set_coups_vues($retour,$link) {
-  /*
-  permet de mettre à jour l'array $retour, notamment les listes de coordonnées de clés 'coups' et 'vues'
-  Pour cela on va parcourir toutes les pièces du joueur
-  retourne $retour mis à jour
-  */
+
+  //permet de mettre à jour l'array $retour, notamment les listes de coordonnées de clés 'coups' et 'vues'
+  //Pour cela on va parcourir toutes les pièces du joueur
+  //retourne $retour mis à jour
+
   $partie = $_GET['partie'];
   $cote = $_GET['cote'];
   // on récupère la nouvelle disposition sur la base de données
@@ -346,10 +359,63 @@ function set_coups_vues($retour,$link) {
     echo json_encode(array("erreur" => "Erreur de requete de base de donnees 5."));
   }
 }
-
+*/
 /*
 Fonctions utiles
 */
+
+
+function set_coups_vues($retour,$link) {
+  /*
+  permet de mettre à jour l'array $retour, notamment les listes de coordonnées de clés 'coups' et 'vues'
+  Pour cela on va parcourir toutes les pièces du joueur
+  retourne $retour mis à jour
+  */
+  $partie = $_GET['partie'];
+  $cote = $_GET['cote'];
+  // on récupère la nouvelle disposition sur la base de données
+  $requete_plateau = "SELECT plateau FROM parties WHERE id = $partie";
+  if ($result_BDD_plateau = mysqli_query($link,$requete_plateau)) {
+    $plateau = json_decode(mysqli_fetch_assoc($result_BDD_plateau)['plateau'],true);
+    // on parcourt toutes les pièces de la couleur du joueur
+    // et on ajoute les possibilités dans la liste des possibilités
+    foreach ($plateau as $piece => $position) { // on parcourt toutes les pièces
+      $retour_piece = coups_vues_par_piece($piece,$plateau,$cote);
+      $retour["coups"] = array_merge($retour["coups"],$retour_piece["coups"]);
+      $retour["vues"] = array_merge($retour["vues"],$retour_piece["vues"]);
+    }
+    return $retour;
+  } else {
+    echo json_encode(array("erreur" => "Erreur de requete de base de donnees 5."));
+  }
+}
+
+
+function coups_vues_par_piece($piece,$plateau,$cote) {
+  /*
+  Renvoie les coups possibles par la pièce et les cases vues
+  */
+  $retour_piece = array("coups" => array(),"vues" => array());
+  if ($piece[1] == $cote) { // on ne prend que celles du côté du joueur courant
+    // on va alors calculer les possibilités de chaque pièce selon sa valeur
+    if ($piece[0] == 'P') { // il s'agit d'un pion
+      $retour_piece = pion($piece,$plateau,$cote);
+      echo json_encode($retour_piece);
+    } else if ($piece[0] == 'F') { // il s'agit d'un fou
+      $retour_piece = fou($piece,$plateau,$cote);
+    } else if ($piece[0] == 'T') { // il s'agit d'une tour
+      $retour_piece = tour($piece,$plateau,$cote);
+    } else if ($piece[0] == 'D') { // il s'agit de la dame
+      $retour_piece = dame($piece,$plateau,$cote);
+    } else if ($piece[0] == 'C') { // il s'agit d'un cavalier
+      $retour_piece = cavalier($piece,$plateau,$cote);
+    } else { // il s'agit d'un roi
+      $retour_piece = roi($piece,$plateau,$cote);
+    }
+  }
+  return $retour_piece;
+}
+
 
 function pion($piece,$plateau,$cote) {
   $coups_par_pion = array();
@@ -415,7 +481,7 @@ function cavalier($piece,$plateau,$cote) {
       }
     }
   }
-  return array("coups"=>$coups_par_cavalier); // on renvoie alors le résultat
+  return array("coups"=>$coups_par_cavalier,"vues"=>array()); // on renvoie alors le résultat
 }
 
 
@@ -440,7 +506,7 @@ function roi($piece,$plateau,$cote) {
       }
     }
   }
-  return array("coups"=>$coups_par_roi); // on renvoie alors le résultat
+  return array("coups"=>$coups_par_roi,"vues"=>array()); // on renvoie alors le résultat
 }
 
 
@@ -451,7 +517,7 @@ function fou($piece,$plateau,$cote) {
     // on a 4 directions disponibles à tester
     $coups_par_fou = array_merge($coups_par_fou,explore_direction($direction,$plateau,$cote,$piece));
   }
-  return array("coups"=>$coups_par_fou); // on renvoie alors le résultat
+  return array("coups"=>$coups_par_fou,"vues"=>array()); // on renvoie alors le résultat
 }
 
 
@@ -462,7 +528,7 @@ function tour($piece,$plateau,$cote) {
     // on a 4 directions disponibles
     $coups_par_tour = array_merge($coups_par_tour,explore_direction($direction,$plateau,$cote,$piece));
   }
-  return array("coups"=>$coups_par_tour); // on renvoie alors le résultat
+  return array("coups"=>$coups_par_tour,"vues"=>array()); // on renvoie alors le résultat
 }
 
 
@@ -473,7 +539,7 @@ function dame($piece,$plateau,$cote) {
     // on a 8 directions disponibles
     $coups_par_dame = array_merge($coups_par_dame,explore_direction($direction,$plateau,$cote,$piece));
   }
-  return array("coups"=>$coups_par_dame); // on renvoie alors le résultat
+  return array("coups"=>$coups_par_dame,"vues"=>array()); // on renvoie alors le résultat
 }
 
 
