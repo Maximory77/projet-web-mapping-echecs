@@ -33,7 +33,7 @@ if (isset($_GET['partie'])) {
   $id_joueur = $_GET['id_joueur'];
 
   // vérification id valide et correspond à un joueur inscrit sur la partie
-  $requete = "SELECT j1,j2,tour,trait,crj1,crj2 FROM parties WHERE id = $partie";
+  $requete = "SELECT j1,j2,tour,trait,histo1,histo2 FROM parties WHERE id = $partie";
   if ($result = mysqli_query($link,$requete)) {
     while ($ligne = mysqli_fetch_assoc($result)) {
       if ($ligne['j1'] == $id_joueur) { // s'il s'agit du joueur 1

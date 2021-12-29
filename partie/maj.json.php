@@ -107,17 +107,22 @@ function je_joue() {
         $retour["vues"] = array_merge($retour["vues"],$retour_piece["coups"]);
         $retour["vues"] = array_merge($retour["vues"],$retour_piece["vues"]);
       }
-      // On renvoie au joueur la confirmatin du coup ("je_joue et 'vues'")
-      echo json_encode($retour);
-      // on met à jour l'histo du joueur et le plateau dans la BDD
+      // on met à jour l'histo du joueur et le plateau dans la BDD;
+      $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
       $histo_joueur[] = $retour;
       $histo_joueur_MAJ_str = strval(json_encode($histo_joueur));
-      $plateau_MAJ_str = strval(json_encode($plateau_MAJ));
       $requete_MAJ_histo = "UPDATE parties2 SET $cle_histo_joueur = '$histo_joueur_MAJ_str' WHERE id = $partie";
-      if ($result_histos = mysqli_query($link,$requete_MAJ_histo)) {
-        echo json_encode($retour); // s'il n'y a pas d'erreur on peut renvoyer le json
+      if ($result_histos = mysqli_query($link,$requete_MAJ_histo)) { // d'abord l'historique
+        $plateau_MAJ_str = strval(json_encode($plateau_MAJ));
+        $requete_MAJ_plateau = "UPDATE parties2 SET plateau = '$plateau_MAJ_str' WHERE id = $partie";
+        if ($result_histos = mysqli_query($link,$requete_MAJ_plateau)) { // puis le plateau
+          // s'il n'y a pas d'erreur on peut renvoyer au joueur la confirmatin du coup ("je_joue et 'vues'")
+          echo json_encode($retour);
+        } else {
+          echo json_encode(array("erreur" => "Erreur de requete de base de donnees."));
+        }
       } else {
-        echo json_encode(array("erreur" => "Erreur de requete de base de donnees 4."));
+        echo json_encode(array("erreur" => "Erreur de requete de base de donnees."));
       }
     }
   } else {
@@ -313,58 +318,6 @@ function verif_coords_fin_vues($coords_coup_adv,$retour,$plateau) {
 }
 
 
-// !!!!!!!!!!!!!!!!!! au cas où !!!!!!!!!!!!!!!!!!!!!!!!
-/*
-function set_coups_vues($retour,$link) {
-
-  //permet de mettre à jour l'array $retour, notamment les listes de coordonnées de clés 'coups' et 'vues'
-  //Pour cela on va parcourir toutes les pièces du joueur
-  //retourne $retour mis à jour
-
-  $partie = $_GET['partie'];
-  $cote = $_GET['cote'];
-  // on récupère la nouvelle disposition sur la base de données
-  $requete_plateau = "SELECT plateau FROM parties WHERE id = $partie";
-  if ($result_BDD_plateau = mysqli_query($link,$requete_plateau)) {
-    $plateau = json_decode(mysqli_fetch_assoc($result_BDD_plateau)['plateau'],true);
-    // on parcourt toutes les pièces de la couleur du joueur
-    // et on ajoute les possibilités dans la liste des possibilités
-    foreach ($plateau as $piece => $position) { // on parcourt toutes les pièces
-      if ($piece[1] == $cote) { // on ne prend que celles du côté du joueur courant
-        // on va alors calculer les possibilités de chaque pièce selon sa valeur
-        if ($piece[0] == 'P') { // il s'agit d'un pion
-          $retour_pion = pion($piece,$plateau,$cote,$retour);
-          $retour["coups"] = array_merge($retour["coups"],$retour_pion["coups"]);
-          $retour["vues"] = array_merge($retour["vues"],$retour_pion["vues"]);
-        } else if ($piece[0] == 'F') { // il s'agit d'un fou
-          $retour_fou = fou($piece,$plateau,$cote,$retour);
-          $retour["coups"] = array_merge($retour["coups"],$retour_fou["coups"]);
-        } else if ($piece[0] == 'T') { // il s'agit d'une tour
-          $retour_tour = tour($piece,$plateau,$cote,$retour);
-          $retour["coups"] = array_merge($retour["coups"],$retour_tour["coups"]);
-        } else if ($piece[0] == 'D') { // il s'agit de la dame
-          $retour_dame = dame($piece,$plateau,$cote,$retour);
-          $retour["coups"] = array_merge($retour["coups"],$retour_dame["coups"]);
-        } else if ($piece[0] == 'C') { // il s'agit d'un cavalier
-          $retour_cavalier = cavalier($piece,$plateau,$cote,$retour);
-          $retour["coups"] = array_merge($retour["coups"],$retour_cavalier["coups"]);
-        } else { // il s'agit d'un roi
-          $retour_roi = roi($piece,$plateau,$cote,$retour);
-          $retour["coups"] = array_merge($retour["coups"],$retour_roi["coups"]);
-        }
-      }
-    }
-    return $retour;
-  } else {
-    echo json_encode(array("erreur" => "Erreur de requete de base de donnees 5."));
-  }
-}
-*/
-/*
-Fonctions utiles
-*/
-
-
 function set_coups_vues($retour,$link) {
   /*
   permet de mettre à jour l'array $retour, notamment les listes de coordonnées de clés 'coups' et 'vues'
@@ -400,7 +353,6 @@ function coups_vues_par_piece($piece,$plateau,$cote) {
     // on va alors calculer les possibilités de chaque pièce selon sa valeur
     if ($piece[0] == 'P') { // il s'agit d'un pion
       $retour_piece = pion($piece,$plateau,$cote);
-      echo json_encode($retour_piece);
     } else if ($piece[0] == 'F') { // il s'agit d'un fou
       $retour_piece = fou($piece,$plateau,$cote);
     } else if ($piece[0] == 'T') { // il s'agit d'une tour

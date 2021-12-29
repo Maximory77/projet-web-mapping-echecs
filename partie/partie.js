@@ -1,11 +1,14 @@
 
-
 /*
+var partie = 999;
+var id_joueur = 'j1';
+
 fetch('cr.json.php?partie=' + partie + '&id_joueur="' + id_joueur + '"')
 .then(r => r.text())
 .then(r => {
   console.log(r)
-})*/
+})
+*/
 
 /*
 var partie = 1;
@@ -24,7 +27,7 @@ fetch('maj.json.php?partie=' + partie + '&id_joueur="' + id_joueur +
 })
 */
 
-
+/*
  // avec le coup
  var partie = 1;
  var id_joueur = 'Sarko';
@@ -37,4 +40,4 @@ fetch('maj.json.php?partie=' + partie + '&id_joueur="' + id_joueur +
 .then(r => r.text())
 .then(r => {
   console.log(r)
-})
+})*/
