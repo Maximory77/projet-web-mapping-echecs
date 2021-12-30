@@ -23,75 +23,109 @@ $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kev
 if (!$link) {
   echo json_encode(array('erreur' => "Erreur de connexion à la base de données"));
   die('Erreur de connexion');
+} else {
+  //Prévention de potentiels problèmes d'encodages
+  mysqli_set_charset($link, "utf8");
+  /*
+  $requete = "SELECT * FROM parties WHERE id = 999";
+  if ($result = mysqli_query($link,$requete)) {
+    echo json_encode(mysqli_fetch_assoc($result));
+  } else {
+    echo "non";
+  }
+  */
+  repartition_cas($link);
 }
-//Prévention de potentiels problèmes d'encodages
-mysqli_set_charset($link, "utf8");
 
 
-// on récupère les données en entrée
-$id_joueur = $_GET['id_joueur'];
-$partie = $_GET['partie'];
-$cote = $_GET['cote'];
-$tour = $_GET['tour'];
-$trait = $_GET['trait'];
+function repartition_cas($link) {
+  /*
+  Permet de répartir la demande du joueur vers les fonctions et les retours qui correspondent à sa requete
+  */
+  // on récupère les données en entrée
+  $id_joueur = $_GET['id_joueur'];
+  $partie = $_GET['partie'];
+  $cote = $_GET['cote'];
+  $tour = $_GET['tour'];
+  $trait = $_GET['trait'];
 
-// on effectue toutes les vérifications avant de répartir la tache vers les différentes fonctions selon le cas
-$requete = "SELECT j1,j2,tour,trait FROM parties WHERE id = $partie";
-if ($result_BDD = mysqli_query($link,$requete)) {
-  $resultat = mysqli_fetch_assoc($result_BDD);
-  // on vérifie que le joueur correspond au bon côté
-  if (($id_joueur==$resultat['j1'] AND $cote==2) OR ($id_joueur==$resultat['j2'] AND $cote==1)) {
-    // on vérifie que la partie en est au stade indiqué par les param "tour" et "trait"
-    if ($tour==$resultat['tour'] AND $trait==$resultat['trait']) { // A JOUR
-      // si on est à jour c'est qu'on veut jouer ou que c'est encore à l'adversaire de jouer
-      if (isset($_GET['coup'])) { // le client a lancé un coup
-        je_joue();
+  // on effectue toutes les vérifications avant de répartir la tache vers les différentes fonctions
+  $requete = "SELECT j1,j2,tour,trait FROM parties WHERE id = $partie";
+  if ($result_BDD = mysqli_query($link,$requete)) {
+    $resultat = mysqli_fetch_assoc($result_BDD);
+    // on vérifie que le joueur correspond au bon côté
+    if (($id_joueur==$resultat['j1'] AND $cote==2) OR ($id_joueur==$resultat['j2'] AND $cote==1)) {
+      // on vérifie que la partie en est au stade indiqué par les param "tour" et "trait"
+      if ($tour==$resultat['tour'] AND $trait==$resultat['trait']) { // A JOUR
+        // si on est à jour c'est qu'on veut jouer ou que c'est encore à l'adversaire de jouer
+        if (isset($_GET['coup'])) { // le client a lancé un coup
+          je_joue($_GET['coup'],$cote,$partie,$tour,$link);
+          /*
+            - gérer demande abandon joueur
+            - gérer la prise en passant et le roque
+            - gérer mise en echec
+            - changer le tour et le trait
+          */
+        } else if ($cote!=$resultat['trait']) { // si on attend le coup de l'adversaire
+          echo json_encode(array('ras' => 1));
+        } else if ($tour==1 AND $trait==1) { // s'il s'agit du tout début du jeu il faut renvoyer les possibilités aux blancs
+          premier_coup($partie);
+        } else {
+          echo json_encode(array('erreur' => "aucune des situations ne correspond"));
+        }
+      } else { // si on n'est pas à jour c'est que l'adversaire a joué => MAJ
+        il_joue($link);
         /*
-          - gérer demande abandon joueur
-          - gérer la prise en passant et le roque
-          - MAJ plateau sur la BDD
-          - MAJ histo
+        - gérer la prise en passant et le roque
+        - MAJ $histo => enlever parties2 quand ça sera bon
+        - gérer demande abandon adv
+        - gérer mise en échec
+        - changer le tour et le trait
         */
-      } else if ($cote!=$resultat['trait']) { // si on attend le coup de l'adversaire
-        echo json_encode(array('ras' => 1));
-      } else {
-        echo json_encode(array('erreur' => "aucune des situations ne correspond"));
       }
-    } else { // si on n'est pas à jour c'est que l'adversaire a joué => MAJ
-      il_joue();
-      /*
-      - gérer la prise en passant et le roque
-      - MAJ $histo => enlever parties2 quand ça sera bon
-      - gérer cas du début (mettre cas en plus avec isset c'est ok)
-      - gérer demande abandon adv
-      */
+    } else {
+      echo json_encode(array('erreur' => "Le joueur ne correspond pas au cote en entree."));
     }
   } else {
-    echo json_encode(array('erreur' => "Le joueur ne correspond pas au côté en entrée."));
+    echo json_encode(array('erreur' => "Erreur de requete de base de donnees 1."));
   }
-} else {
-  echo json_encode(array('erreur' => "Erreur de requete de base de donnees 1."));
 }
+
+
+/*
+Fonctions permettant de donner aux blanc les coups pour débuter la partie
+*/
+
+
+function premier_coup($partie) {
+  /*
+  La partie n'a pas débuté, on veut renvoyer les coups possibles par les blancs
+  */
+  $retour = array("coups" => [],"vues"=>[]); // initilialisation de l'array envoyé en retour
+  $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
+  // on met à jour les coups et les vues dans l'array $retour
+  $retour = set_coups_vues($retour,$link);
+  // On peut alors mettre à jour la BDD
+  $histo_joueur_MAJ_str = strval(json_encode(array("histo"=>array($retour))));
+  $requete_MAJ_histo = "UPDATE parties SET histo1 = '$histo_joueur_MAJ_str' WHERE id = $partie";
+  if ($result_histos = mysqli_query($link,$requete_MAJ_histo)) {
+    echo json_encode($retour); // s'il n'y a pas d'erreur de requete on peut renvoyer le json au joueur
+  } else {
+    echo json_encode(array("erreur" => "Erreur de requete de base de donnees 4."));
+  }
+}
+
 
 /*
 Fonctions permettant de mettre en place le coup joué par le joueur
 */
 
-function je_joue() {
-  $i_coup = $_GET['coup']; // récupération de l'indice du coup joué
-  $cote = $_GET['cote']; // récupération du côté
-  $partie = $_GET['partie']; // récupération de la partie
+function je_joue($i_coup,$cote,$partie,$tour,$link) {
   // récupération des historiques des joueurs
-  $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
   $requete_je_joue = "SELECT histo1,histo2,plateau FROM parties WHERE id = $partie";
   if ($result_je_joue = mysqli_query($link,$requete_je_joue)) {
     $result_je_joue_array = mysqli_fetch_assoc($result_je_joue);
-    if ($cote == 1) {
-      $cle_histo_joueur = 'histo2';
-    } else {
-      $cle_histo_joueur = 'histo1';
-    }
-    $histo_joueur = json_decode($result_je_joue_array[$cle_histo_joueur],true);
+    $histo_joueur = json_decode($result_je_joue_array['histo'.$cote],true);
     // récupération des coordonnées du coup fait par le joueur
     $coord_coup_joueur = end($histo_joueur["histo"])["coups"][$i_coup];
     $plateau = json_decode($result_je_joue_array['plateau'],true);
@@ -108,22 +142,26 @@ function je_joue() {
         $retour["vues"] = array_merge($retour["vues"],$retour_piece["vues"]);
       }
       // on met à jour l'histo du joueur et le plateau dans la BDD;
-      $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
-      $histo_joueur[] = $retour;
-      $histo_joueur_MAJ_str = strval(json_encode($histo_joueur));
-      $requete_MAJ_histo = "UPDATE parties2 SET $cle_histo_joueur = '$histo_joueur_MAJ_str' WHERE id = $partie";
-      if ($result_histos = mysqli_query($link,$requete_MAJ_histo)) { // d'abord l'historique
-        $plateau_MAJ_str = strval(json_encode($plateau_MAJ));
-        $requete_MAJ_plateau = "UPDATE parties2 SET plateau = '$plateau_MAJ_str' WHERE id = $partie";
-        if ($result_histos = mysqli_query($link,$requete_MAJ_plateau)) { // puis le plateau
-          // s'il n'y a pas d'erreur on peut renvoyer au joueur la confirmatin du coup ("je_joue et 'vues'")
-          echo json_encode($retour);
-        } else {
-          echo json_encode(array("erreur" => "Erreur de requete de base de donnees."));
-        }
+      $histo_joueur[] = $retour; // on ajoute le retour à l'historique du jouueur
+      $histo_joueur_MAJ_str = strval(json_encode($histo_joueur)); // histo du joueur en string
+      $plateau_MAJ_str = strval(json_encode($plateau_MAJ)); // plateau maj en string
+      if ($cote==2) { // si on est du cote des noirs on va changer de tour et de trait
+        $tour = intval($tour)+1; // on incrémente le tour
+        $trait = 1; // le trait est à l'adversaire
+      } else { // si on est chez les blancs on reste dans le même tour
+        $trait = 2; // le trait est à l'adversaire
+      }
+      $requete_MAJ = "UPDATE parties SET  histo" . $cote . " = '$histo_joueur_MAJ_str',
+                                          plateau = '$plateau_MAJ_str',
+                                          trait = $trait,
+                                          tour = $tour
+                                          WHERE id = $partie";
+      if (mysqli_query($link,$requete_MAJ)) { // si la base de données à bien été mise à jour
+        echo json_encode($retour);
       } else {
         echo json_encode(array("erreur" => "Erreur de requete de base de donnees."));
       }
+
     }
   } else {
     echo json_encode(array("erreur" => "Erreur de requete de base de donnees 2."));
@@ -139,9 +177,11 @@ function plateau_MAJ($coords_coup_joueur,$plateau,$cote) {
   */
   foreach ($plateau as $piece => $position) { // on parcourt chaque pièce du plateau
     // si la pièce parcourue correspond à la pièce que le joueur veut bouger
-    if (($position[$i]==$coords_coup_joueur[0]) && ($position[$j]==$coords_coup_joueur[1])) {
-      $plateau[$piece][$position][$i] = $coords_coup_joueur[2];
-      $plateau[$piece][$position][$j] = $coords_coup_joueur[3];
+
+    if (($position["i"]==$coords_coup_joueur[0]) && ($position["j"]==$coords_coup_joueur[1])) {
+      $plateau[$piece]["i"] = $coords_coup_joueur[2];
+      $plateau[$piece]["j"] = $coords_coup_joueur[3];
+
       if (sizeof($coords_coup_joueur) == 5) { // si on a un cas exceptionnel
         if ($coords_coup_joueur[4] == 'pp') { // s'il y a une prise en passant
           echo "prise en passant";
@@ -152,9 +192,9 @@ function plateau_MAJ($coords_coup_joueur,$plateau,$cote) {
     }
     // si la pièce parcourue correspond à la position d'arrivée de la pièce on la supprime en lui donnant des coordonnées null
     // il s'agit soit d'une pièce adverse soit d'une tour s'il y a roque
-    if (($position[$i]==$coords_coup_joueur[2]) && ($position[$j]==$coords_coup_joueur[3])) {
-      $plateau[$piece][$position][$i] = null;
-      $plateau[$piece][$position][$j] = null;
+    if (($position["i"]==$coords_coup_joueur[2]) && ($position["j"]==$coords_coup_joueur[3])) {
+      $plateau[$piece]["i"] = null;
+      $plateau[$piece]["j"] = null;
       if (sizeof($coords_coup_joueur) == 5) { // on a passé un paramètre en plus
         if ($coords_coup_joueur[4] == 'r') { // il s'agit bien d'un roque
           echo "roque";
@@ -211,48 +251,41 @@ function echec_au_roi($plateau,$cote) {
 Fonctions permettant de mettre en place le coup joué par l'adversaire
 */
 
-function il_joue() {
+function il_joue($link) {
   /*
   L'adversaire a joué, on veut renvoyer le coup de l'adversaire selon sa visibilité
   ainsi que les coups possibles par le joueur et les cases vues
   */
   $retour = array("coups" => [],"vues"=>[],"il_joue" => [0,0,0,0]); // initilialisation de l'entité envoyé en retour
-  $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
-
   // on met à jour les coups et les vues dans l'array $retour
   $retour = set_coups_vues($retour,$link);
-
   // on va ensuite préparer la partie de la réponse correspondant au coup joué par l'adversaire "il_joue"
   $partie = $_GET['partie'];
   $requete_histos = "SELECT histo1,histo2 FROM parties WHERE id = $partie";
   if ($result_histos = mysqli_query($link,$requete_histos)) {
-
     // récupération des historiques des joueurs
     $histos = mysqli_fetch_assoc($result_histos);
     if ($cote == 1) {
-      $cle_histo_joueur = 'histo2';
-      $cle_histo_adv = 'histo1';
-    } else {
       $cle_histo_joueur = 'histo1';
       $cle_histo_adv = 'histo2';
+    } else {
+      $cle_histo_joueur = 'histo2';
+      $cle_histo_adv = 'histo1';
     }
     $histo_joueur = json_decode($histos[$cle_histo_joueur],true);
     $histo_adv = json_decode($histos[$cle_histo_adv],true);
     // récupération des coordonnées du dernier coup de l'adversaire
     $coords_coup_adv = end($histo_adv["histo"])["je_joue"];
-
     // on teste alors si on peut ajouter les coordonnées et la nature ou si elles restent cachées
     $retour = verif_coords_depart_vues($histo_joueur,$histo_adv,$coords_coup_adv,$retour);
     $retour = verif_coords_fin_vues($coords_coup_adv,$retour,$plateau);
-
   } else {
     echo json_encode(array("erreur" => "Erreur de requete de base de donnees 3."));
   }
-
   // on met à jour la colonne histo du joueur dans la base de données
-  $histo_joueur[] = $retour;
+  $histo_joueur['histo'][] = $retour;
   $histo_joueur_MAJ_str = strval(json_encode($histo_joueur));
-  $requete_MAJ_histo = "UPDATE parties2 SET $cle_histo_joueur = '$histo_joueur_MAJ_str' WHERE id = $partie";
+  $requete_MAJ_histo = "UPDATE parties SET $cle_histo_joueur = '$histo_joueur_MAJ_str' WHERE id = $partie";
   if ($result_histos = mysqli_query($link,$requete_MAJ_histo)) {
     echo json_encode($retour); // s'il n'y a pas d'erreur on peut renvoyer le json
   } else {
