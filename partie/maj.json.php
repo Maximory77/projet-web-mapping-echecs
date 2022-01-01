@@ -26,15 +26,15 @@ if (!$link) {
 } else {
   //Prévention de potentiels problèmes d'encodages
   mysqli_set_charset($link, "utf8");
-  /*
+
   $requete = "SELECT * FROM parties WHERE id = 999";
   if ($result = mysqli_query($link,$requete)) {
-    echo json_encode(mysqli_fetch_assoc($result));
+    echo json_encode(mysqli_fetch_assoc($result)['plateau']);
   } else {
     echo "non";
   }
-  */
-  repartition_cas($link);
+
+  //repartition_cas($link);
 }
 
 
@@ -65,6 +65,7 @@ function repartition_cas($link) {
             - gérer la prise en passant et le roque
             - gérer mise en echec
             - changer le tour et le trait
+            - renvoie tjrs [0,0,0,0] sauf quand il l'a pris (null) => ne doit pas prendre ce qui était mais ce qui est maintenant
           */
         } else if ($cote!=$resultat['trait']) { // si on attend le coup de l'adversaire
           echo json_encode(array('ras' => 1));
@@ -142,7 +143,7 @@ function je_joue($i_coup,$cote,$partie,$tour,$link) {
         $retour["vues"] = array_merge($retour["vues"],$retour_piece["vues"]);
       }
       // on met à jour l'histo du joueur et le plateau dans la BDD;
-      $histo_joueur[] = $retour; // on ajoute le retour à l'historique du jouueur
+      $histo_joueur['histo'] = $retour; // on ajoute le retour à l'historique du joueur
       $histo_joueur_MAJ_str = strval(json_encode($histo_joueur)); // histo du joueur en string
       $plateau_MAJ_str = strval(json_encode($plateau_MAJ)); // plateau maj en string
       if ($cote==2) { // si on est du cote des noirs on va changer de tour et de trait
@@ -177,16 +178,17 @@ function plateau_MAJ($coords_coup_joueur,$plateau,$cote) {
   */
   foreach ($plateau as $piece => $position) { // on parcourt chaque pièce du plateau
     // si la pièce parcourue correspond à la pièce que le joueur veut bouger
-
     if (($position["i"]==$coords_coup_joueur[0]) && ($position["j"]==$coords_coup_joueur[1])) {
       $plateau[$piece]["i"] = $coords_coup_joueur[2];
       $plateau[$piece]["j"] = $coords_coup_joueur[3];
-
-      if (sizeof($coords_coup_joueur) == 5) { // si on a un cas exceptionnel
-        if ($coords_coup_joueur[4] == 'pp') { // s'il y a une prise en passant
-          echo "prise en passant";
-        } else { // si on a une promotion on change la valeur de la pièce
-          $plateau[$piece][0] = $coords_coup_joueur[4];
+      if (sizeof($coords_coup_joueur) == 5) { // si on a une option
+        $option = $coords_coup_joueur[4]
+        if ($option[0] == 'p') { // il s'agit alors d'une prise en passant ou d'une promotion
+          if ($option == "pp") {// pour une prise en passant
+            echo "prise en passant";
+          } else { // pour une promotion
+            $plateau[$piece][0] = $option[1];
+          }
         }
       }
     }
@@ -382,20 +384,22 @@ function coups_vues_par_piece($piece,$plateau,$cote) {
   Renvoie les coups possibles par la pièce et les cases vues
   */
   $retour_piece = array("coups" => array(),"vues" => array());
-  if ($piece[1] == $cote) { // on ne prend que celles du côté du joueur courant
-    // on va alors calculer les possibilités de chaque pièce selon sa valeur
-    if ($piece[0] == 'P') { // il s'agit d'un pion
-      $retour_piece = pion($piece,$plateau,$cote);
-    } else if ($piece[0] == 'F') { // il s'agit d'un fou
-      $retour_piece = fou($piece,$plateau,$cote);
-    } else if ($piece[0] == 'T') { // il s'agit d'une tour
-      $retour_piece = tour($piece,$plateau,$cote);
-    } else if ($piece[0] == 'D') { // il s'agit de la dame
-      $retour_piece = dame($piece,$plateau,$cote);
-    } else if ($piece[0] == 'C') { // il s'agit d'un cavalier
-      $retour_piece = cavalier($piece,$plateau,$cote);
-    } else { // il s'agit d'un roi
-      $retour_piece = roi($piece,$plateau,$cote);
+  if (($plateau[$piece]["i"] != null) && ($plateau[$piece]["j"] != null)) { // on vérifie que la pièce n'a pas été prise
+    if ($piece[1] == $cote) { // on ne prend que celles du côté du joueur courant
+      // on va alors calculer les possibilités de chaque pièce selon sa valeur
+      if ($piece[0] == 'P') { // il s'agit d'un pion
+        $retour_piece = pion($piece,$plateau,$cote);
+      } else if ($piece[0] == 'F') { // il s'agit d'un fou
+        $retour_piece = fou($piece,$plateau,$cote);
+      } else if ($piece[0] == 'T') { // il s'agit d'une tour
+        $retour_piece = tour($piece,$plateau,$cote);
+      } else if ($piece[0] == 'D') { // il s'agit de la dame
+        $retour_piece = dame($piece,$plateau,$cote);
+      } else if ($piece[0] == 'C') { // il s'agit d'un cavalier
+        $retour_piece = cavalier($piece,$plateau,$cote);
+      } else { // il s'agit d'un roi
+        $retour_piece = roi($piece,$plateau,$cote);
+      }
     }
   }
   return $retour_piece;
@@ -408,22 +412,25 @@ function pion($piece,$plateau,$cote) {
   $i_p = $plateau[$piece]["i"]; // on récupère la coord i du pion
   $j_p = $plateau[$piece]["j"]; // et sa coordonnée j
   // on va tester la couleur du pion
+  // et on vérifie si le pion peut avancer de deux cases ou d'une seulement
   if ($cote == 1) { // s'il s'agit d'un pion blanc
     $sens = +1; // on va 'avancer' dans le sens i positif
+    if ($i_p == 2) {$incr = 2;} // le pion peut parcourir deux cases
   } else { // si on est du côté des noirs
     $sens = -1; // on va 'avancer' dans le sens i négatif
+    if ($i_p == 7) {$incr == 2;} // le pion peut parcourir deux cases
   }
-  // on va parcourir les deux cases devant le pion
-  foreach (array($i_p+1*$sens,$i_p+2*$sens) as $i_expl) { // on teste les cases devant le pion
+  // on va parcourir les cases devant le pion
+  foreach (array($i_p+1*$sens,$i_p+$incr*$sens) as $i_expl) { // on teste les cases devant le pion
     $occupee = occupee($plateau,$i_expl,$j_p);
     if ($occupee == false) { // s'il n'y a rien sur le chemin
       $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p];
     } else if (($i_expl==1 && $cote==1) || ($i_expl==8 && $cote==2)) { // promotion
       // on ajoute les 4 promotions possibles
-      $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,"F"];
-      $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,"T"];
-      $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,"R"];
-      $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,"D"];
+      $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,"pF"];
+      $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,"pT"];
+      $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,"pR"];
+      $coups_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,"pD"];
     } else { // si on rencontre un obstacle
       if ($occupee[1]!=$cote) { // si l'obstacle n'est pas de la couleur du joueur
         $vues_par_pion[] = [$i_p,$j_p,$i_expl,$j_p,$occupee[0]]; // on enregistre cet obstacle dans la valeur "vues"
