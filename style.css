@@ -29,6 +29,35 @@ body {
 }
 
 /*----------------------------------------------------------------------------
+Index
+----------------------------------------------------------------------------*/
+.index {
+  display: grid;
+  grid-template-rows: 10% 60% 30%;
+  text-align: center;
+}
+
+#iconJouer {
+  grid-column: 1/-1;
+  /* text-align: center; */
+  object-fit: contain;
+  max-height: fit-content;
+  height: 90%;
+}
+
+#iconJouer img {
+  /* padding : 10em; */
+  border-radius: 5em;
+  height: 100%;
+}
+
+#contenu {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+
+/*----------------------------------------------------------------------------
 Menu
 ----------------------------------------------------------------------------*/
 .menu {
@@ -94,6 +123,7 @@ Menu
   margin-bottom: 1em;
   margin-top: auto;
 }
+
 /*----------------------------------------------------------------------------
 Login
 ----------------------------------------------------------------------------*/
@@ -174,21 +204,17 @@ Choix partie
   max-height: 25em;
 }
 
-.choixPartie a {
+.wrapper-choix a {
   text-decoration: none;
   color:#f2f2f2;
 }
 
-.choixPartie .image-link {
+.wrapper-choix .image-link {
   width: 80%;
-  /* height: 20em; */
   margin: auto;
-  /* margin: 10em; */
-  /* max-height: 40vh;
-  object-fit: contain; */
 }
 
-.choixPartie img {
+.wrapper-choix img {
   width: 80%;
   height: auto;
   object-fit: contain;
@@ -213,11 +239,16 @@ Choix partie
 /*----------------------------------------------------------------------------
 Regarder
 ----------------------------------------------------------------------------*/
-/* .choixPartie {
+.choixObservation {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-} */
+  grid-template-columns: 50% 50%;
+  text-align: center;
+}
+
+.choixObservation a {
+  text-decoration: none;
+  color:#f2f2f2;
+}
 
 /*----------------------------------------------------------------------------
 Jeu
