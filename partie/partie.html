@@ -1,13 +1,58 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="fr" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>chess wihou</title>
+    <title>echequier</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
   </head>
   <body>
-    <p id="test"> rien </p>
+
+    <div class="menu">
+      <a href="#">Accueil</a>
+      <a href="../index.html">Connection</a>
+      <a href="#" class="active">Partie en cours</a>
+      <a href="/choixPartie/choixPartie.html">Choix Partie</a>
+      <a href="#">Meilleurs joueurs</a>
+      <a href="#">Voir une partie</a>
+      <a href="#">Aller bosser la géodésie</a>
+    </div>
+
+    <div id="container">
+
+      <div id= class="cimetiere j1"></div>
+      <div id="plateau">
+        <div class="case_blanche_case" id="case11"></div>  <div class="case_noire_case" id="case21"></div>  <div class="case_blanche_case" id="case31"></div>  <div class="case_noire_case" id="case41"></div>  <div class="case_blanche_case" id="case51"></div>  <div class="case_noire_case" id="case61"></div>  <div class="case_blanche_case" id="case71"></div>  <div class="case_noire_case" id="case81"></div>
+        <div class="case_noire_case" id="case12"></div>  <div class="case_blanche_case" id="case22"></div>  <div class="case_noire_case" id="case32"></div>  <div class="case_blanche_case" id="case42"></div>  <div class="case_noire_case" id="case52"></div>  <div class="case_blanche_case" id="case62"></div>  <div class="case_noire_case" id="case72"></div>  <div class="case_blanche_case" id="case82"></div>
+        <div class="case_blanche_case" id="case13"></div>  <div class="case_noire_case" id="case23"></div>  <div class="case_blanche_case" id="case33"></div>  <div class="case_noire_case" id="case43"></div>  <div class="case_blanche_case" id="case53"></div>  <div class="case_noire_case" id="case63"></div>  <div class="case_blanche_case" id="case73"></div>  <div class="case_noire_case" id="case83"></div>
+        <div class="case_noire_case" id="case14"></div>  <div class="case_blanche_case" id="case24"></div>  <div class="case_noire_case" id="case34"></div>  <div class="case_blanche_case" id="case44"></div>  <div class="case_noire_case" id="case54"></div>  <div class="case_blanche_case" id="case64"></div>  <div class="case_noire_case" id="case74"></div>  <div class="case_blanche_case" id="case84"></div>
+        <div class="case_blanche_case" id="case15"></div>  <div class="case_noire_case" id="case25"></div>  <div class="case_blanche_case" id="case35"></div>  <div class="case_noire_case" id="case45"></div>  <div class="case_blanche_case" id="case55"></div>  <div class="case_noire_case" id="case65"></div>  <div class="case_blanche_case" id="case75"></div>  <div class="case_noire_case" id="case85"></div>
+        <div class="case_noire_case" id="case16"></div>  <div class="case_blanche_case" id="case26"></div>  <div class="case_noire_case" id="case36"></div>  <div class="case_blanche_case" id="case46"></div>  <div class="case_noire_case" id="case56"></div>  <div class="case_blanche_case" id="case66"></div>  <div class="case_noire_case" id="case76"></div>  <div class="case_blanche_case" id="case86"></div>
+        <div class="case_blanche_case" id="case17"></div>  <div class="case_noire_case" id="case27"></div>  <div class="case_blanche_case" id="case37"></div>  <div class="case_noire_case" id="case47"></div>  <div class="case_blanche_case" id="case57"></div>  <div class="case_noire_case" id="case67"></div>  <div class="case_blanche_case" id="case77"></div>  <div class="case_noire_case" id="case87"></div>
+        <div class="case_noire_case" id="case18"></div>  <div class="case_blanche_case" id="case28"></div>  <div class="case_noire_case" id="case38"></div>  <div class="case_blanche_case" id="case48"></div>  <div class="case_noire_case" id="case58"></div>  <div class="case_blanche_case" id="case68"></div>  <div class="case_noire_case" id="case78"></div>  <div class="case_blanche_case" id="case88"></div>
+      </div>
+      <div class="cimetiere j2">
+        <img draggable="true" src="./images/tour_blanc.png" alt="tour_blanc">
+        <img draggable="true" src="./images/tour_blanc.png" alt="tour_blanc">
+        <img draggable="true" src="./images/tour_blanc.png" alt="tour_blanc">
+        <img draggable="true" src="./images/tour_blanc.png" alt="tour_blanc">
 
 
-    <script src="partie.js"></script>
+      </div>
+      <div id="options">
+        <div id="j1">NOM JOUEUR 1</div>
+        <button>Proposer Null</button>
+        <button>Proposer annulation</button>
+        <button>Sauvegarder et quitter</button>
+        <button>ABANDONNER</button>
+        <div id="j2">NOM JOUEUR 2</div>
+      </div>
+
+      <div id="promo"></div>
+    </div>
+
+    <script type="text/javascript" src="partie.js"></script>
+
   </body>
 </html>
