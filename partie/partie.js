@@ -1,4 +1,5 @@
 //initialisation des Variables
+
 var plateau =  document.getElementById('plateau');
 var promo =  document.getElementById('promo');
 var container =  document.getElementById('container');
@@ -93,7 +94,6 @@ for (let i=0; i<initialisation_pos.length;i++){
 
 // recuperation des coups possibles :
 coups_possible=[[2,1,1,3],[2,1,3,3],[7,1,6,3],[7,1,8,3],[1,2,1,3],[2,2,2,3],[3,2,3,3],[4,2,4,3],[5,2,5,3],[6,2,6,3],[7,2,7,3],[8,2,8,3],[1,2,1,4],[2,2,2,4],[3,2,3,4],[4,2,4,4],[5,2,5,4],[6,2,6,4],[7,2,7,4],[8,2,8,4]]
-
 
 
 
