@@ -191,7 +191,6 @@ Choix partie
 .choixPartie {
   display: grid;
   grid-template-columns: 50% 50%;
-  grid-template-rows: 50% 50%;
   text-align: center;
 }
 
@@ -220,20 +219,14 @@ Choix partie
   object-fit: contain;
 }
 
-#nouvellePartieAlea {
+#nouvellePartieAmis {
   grid-column: 1;
   grid-row: 1;
 }
 
-#nouvellePartieAmis {
+#chargerPartie {
   grid-column: 2;
   grid-row: 1;
-}
-
-#chargerPartie {
-  grid-column: 1/-1;
-  grid-row: 2;
-  /* margin-left: ; */
 }
 
 /*----------------------------------------------------------------------------
