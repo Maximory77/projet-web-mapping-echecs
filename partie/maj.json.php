@@ -26,15 +26,15 @@ if (!$link) {
 } else {
   //Prévention de potentiels problèmes d'encodages
   mysqli_set_charset($link, "utf8");
-
+  /*
   $requete = "SELECT * FROM parties WHERE id = 999";
   if ($result = mysqli_query($link,$requete)) {
     echo json_encode(mysqli_fetch_assoc($result)['plateau']);
   } else {
     echo "non";
   }
-
-  //repartition_cas($link);
+  */
+  repartition_cas($link);
 }
 
 
@@ -182,7 +182,7 @@ function plateau_MAJ($coords_coup_joueur,$plateau,$cote) {
       $plateau[$piece]["i"] = $coords_coup_joueur[2];
       $plateau[$piece]["j"] = $coords_coup_joueur[3];
       if (sizeof($coords_coup_joueur) == 5) { // si on a une option
-        $option = $coords_coup_joueur[4]
+        $option = $coords_coup_joueur[4];
         if ($option[0] == 'p') { // il s'agit alors d'une prise en passant ou d'une promotion
           if ($option == "pp") {// pour une prise en passant
             echo "prise en passant";

@@ -152,4 +152,4 @@ function recup_coup_t3_j2() {
   })
 }
 
-joue_t2_j2();
+recup_coup_t1_j1();
