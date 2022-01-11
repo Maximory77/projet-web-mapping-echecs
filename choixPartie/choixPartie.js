@@ -1,11 +1,11 @@
 // A relier avec le bon id
-let bouton_regarder = document.getElementById('bouton_regarder');
-let bouton_rejoindre = document.getElementById('bouton_rejoindre');
-let bouton_defier = document.getElementById('bouton_defier');
+let bouton_observer = document.getElementById('observer');
+let bouton_rejoindre = document.getElementById('chargerPartie');
+let bouton_defier = document.getElementById('nouvellePartieAlea');
 
 
 
-bouton_regarder.addEventListener('click', () => {
+bouton_observer.addEventListener('click', () => {
   // Vérifier l'id
   let liste_partie = document.getElementsById('liste_partie');
 
@@ -81,3 +81,8 @@ bouton_defier.addEventListener('click', () => {
     }
   })
 })
+
+
+
+///// popup lorsque l'on veut changer de page lorsqu'une partie est en cours
+///// afficher le bouton connection si on est pas connecté, deconnection si on est connecté
