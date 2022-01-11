@@ -22,6 +22,10 @@ body {
   font-weight: lighter;
 }
 
+p {
+  color:#f2f2f2;
+}
+
 #container {
   grid-column: 2;
   padding: 2em;
@@ -124,6 +128,10 @@ Menu
   margin-top: auto;
 }
 
+.menu p {
+  color: rgb(100, 100, 100);
+}
+
 /*----------------------------------------------------------------------------
 Login
 ----------------------------------------------------------------------------*/
@@ -199,8 +207,8 @@ Choix partie
   padding: 3em;
   display: flex;
   flex-direction: column;
-  max-width: 25em;
-  max-height: 25em;
+  max-width: 37em;
+  max-height: 37em;
 }
 
 .wrapper-choix a {
@@ -241,6 +249,15 @@ Regarder
 .choixObservation a {
   text-decoration: none;
   color:#f2f2f2;
+}
+
+.choixObservation .wrapper-choix {
+  margin: auto;
+  padding: 3em;
+  display: flex;
+  flex-direction: column;
+  max-width: 40em;
+  max-height: 40em;
 }
 
 /*----------------------------------------------------------------------------
