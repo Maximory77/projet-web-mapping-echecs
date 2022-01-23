@@ -418,7 +418,7 @@ function pion($piece,$plateau,$cote) {
     if ($i_p == 2) {$incr = 2;} // le pion peut parcourir deux cases
   } else { // si on est du côté des noirs
     $sens = -1; // on va 'avancer' dans le sens i négatif
-    if ($i_p == 7) {$incr == 2;} // le pion peut parcourir deux cases
+    if ($i_p == 7) {$incr = 2;} // le pion peut parcourir deux cases
   }
   // on va parcourir les cases devant le pion
   foreach (array($i_p+1*$sens,$i_p+$incr*$sens) as $i_expl) { // on teste les cases devant le pion
