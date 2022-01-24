@@ -1,3 +1,4 @@
+// Récupère les éléments HTML nécessaires
 let bouton_regis = document.getElementById('bouton_regis');
 
 // let pseudo_login = document.getElementById('pseudo_login');
@@ -22,13 +23,14 @@ $('.message a').click(function(){
 
 
 
-
+// Ajout des event listeners sur les boutons
+// Bouton d'inscription
 bouton_regis.addEventListener('click', () => {
   erreur_regis.innerHTML = "";
   let pseudo_regis = document.getElementById('pseudo_regis');
   let mdp_regis = document.getElementById('mdp_regis');
   let mail_regis = document.getElementById('mail_regis');
-  // Fonction permettant de créer un compte à partir d'une adresse mail
+  // Permet de créer un compte à partir d'une adresse mail
   // On y associe un pseudo et un mot de passe
   fetch('../log/auth.json.php')
   .then(r => r.json())
@@ -40,11 +42,6 @@ bouton_regis.addEventListener('click', () => {
         erreur_regis.innerHTML = "<p>Ce pseudo est déjà utilisé</p>";
         break;
       }
-      // else if (mail_regis.value == bd_regis[i].mail){
-      //   // A chaque adresse mail n'est associé qu'un seul compte
-      //   erreur_regis.innerHTML = "<p>Un compte est déjà associé à cette adresse</p>";
-      //   break;
-      // }
       else if(mdp_regis.value.length<3){
         // Un mot de passe doit être de taille supérieure ou égale à 3 caractères
         erreur_regis.innerHTML = "<p>Veuillez choisir un mot de passe de 3 caractères ou plus</p>";
@@ -77,12 +74,8 @@ bouton_regis.addEventListener('click', () => {
   })
 });
 
-
-
-
-
-
-
+ 
+// Bouton de connexion
 bouton_login.addEventListener('click', () => {
   erreur_login.innerHTML = ""
   let pseudo_login = document.getElementById('pseudo_login');
