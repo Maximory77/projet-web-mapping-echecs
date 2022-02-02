@@ -15,13 +15,12 @@ var rep_iframe="";
 var bool_promo=false;
 
 //initialisation des attribut pour les envoies au serveur
-var partie = 999;
+var partie = 10;
 var id_joueur = 'j1';
 var cote = 2;
 var tour = 1;
 var trait = 1;
 var coup = 0;
-
 
 // FONCTIONS UTILES
 //permet de remettre les cases de la bonne couleur des cases surlignées
@@ -110,8 +109,8 @@ function joue_uncoups(){
   }
 }
 
-test=setInterval(joue_uncoups,4000);// fonction qui permet de jouer de jouer si on a le trait
-test=setInterval(cr_1_j1,1000);//fonction qui regarde toutes les 1 secondes a quel tour on est et qui a le trait
+test=setInterval(joue_uncoups,4000); // fonction qui permet de jouer de jouer si on a le trait
+test=setInterval(cr_1_j1,1000); //fonction qui regarde toutes les 1 secondes a quel tour on est et qui a le trait
 
 
 
@@ -208,6 +207,7 @@ function cr_1_j1() {
     tour=parseInt(r['tour']);
   })
 }
+
 function joue_j1(){
   // j1 joue un coup
   fetch('../maj.json.php?partie=' + partie + '&id_joueur="' + id_joueur +
@@ -233,7 +233,7 @@ function recup_coup_j1(){
 
 function premier_coup_j2() {
   // j2 commence à jouer, il demande les premiers coups
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j2';
   var cote = 1;
   var tour = 1;
@@ -250,7 +250,7 @@ function premier_coup_j2() {
 }
 function joue_t1_j2() {
   // j2 joue le coup 1 (pion en bas à gauche avance de 2)
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j2';
   var cote = 1;
   var tour = 1;
@@ -287,7 +287,7 @@ function joue_t1_j1() {
 }
 function recup_coup_t2_j2() {
   // j1 récupère le coup de j2
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j2';
   var cote = 1;
   var tour = 1;
@@ -303,7 +303,7 @@ function recup_coup_t2_j2() {
 }
 function joue_t2_j2() {
   //88
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j2';
   var cote = 1;
   var tour = 2;
@@ -318,7 +318,7 @@ function joue_t2_j2() {
 }
 function recup_coup_t2_j1() {
   // j1 récupère le coup de j2
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j1';
   var cote = 2;
   var tour = 2;
@@ -334,7 +334,7 @@ function recup_coup_t2_j1() {
 }
 function joue_t2_j1() {
   // j1 récupère le coup de j2
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j1';
   var cote = 2;
   var tour = 2;
@@ -349,7 +349,7 @@ function joue_t2_j1() {
 }
 function recup_coup_t3_j2() {
   // j1 récupère le coup de j2
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j2';
   var cote = 1;
   var tour = 3;

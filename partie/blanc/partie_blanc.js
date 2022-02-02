@@ -16,13 +16,18 @@ var bool_promo=false;
 var tab_promotion=["case44","case81", "case82", "case83", "case84", "case85", "case86", "case87","case88"];
 
 //initialisation des attribut pour les envoies au serveur
-var partie = 999;
+var partie = 10;
 var id_joueur = 'j2';
 var cote = 1;
 var tour = 1;
 var trait = 1;
 var coup = 0;
 
+// ajout de Baptiste pour recharger et ne pas toujours retourner dans la BDD
+recharger_boutton = document.getElementById('recharger')
+recharger_boutton.addEventListener('click',function() {
+  fetch('../recharger.php?partie=' + partie)
+})
 
 // FONCTIONS UTILES
 //permet de remettre les cases de la bonne couleur des cases surlignées
@@ -261,7 +266,7 @@ function joue_t1_j2() {
 }
 function recup_coup_t1_j1() {
   // j1 récupère le coup de j2
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j1';
   var cote = 2;
   var tour = 1;
@@ -277,7 +282,7 @@ function recup_coup_t1_j1() {
 }
 function joue_t1_j1() {
   // j1 récupère le coup de j2
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j1';
   var cote = 2;
   var tour = 1;
@@ -292,7 +297,7 @@ function joue_t1_j1() {
 }
 function recup_coup_t2_j2() {
   // j1 récupère le coup de j2
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j2';
   var cote = 1;
   var tour = 1;
@@ -308,7 +313,7 @@ function recup_coup_t2_j2() {
 }
 function joue_t2_j2() {
   //88
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j2';
   var cote = 1;
   var tour = 2;
@@ -323,7 +328,7 @@ function joue_t2_j2() {
 }
 function recup_coup_t2_j1() {
   // j1 récupère le coup de j2
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j1';
   var cote = 2;
   var tour = 2;
@@ -339,7 +344,7 @@ function recup_coup_t2_j1() {
 }
 function joue_t2_j1() {
   // j1 récupère le coup de j2
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j1';
   var cote = 2;
   var tour = 2;
@@ -354,7 +359,7 @@ function joue_t2_j1() {
 }
 function recup_coup_t3_j2() {
   // j1 récupère le coup de j2
-  var partie = 999;
+  var partie = 10;
   var id_joueur = 'j2';
   var cote = 1;
   var tour = 3;

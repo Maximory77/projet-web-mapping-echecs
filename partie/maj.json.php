@@ -26,14 +26,6 @@ if (!$link) {
 } else {
   //Prévention de potentiels problèmes d'encodages
   mysqli_set_charset($link, "utf8");
-  /*
-  $requete = "SELECT * FROM parties WHERE id = 999";
-  if ($result = mysqli_query($link,$requete)) {
-    echo json_encode(mysqli_fetch_assoc($result)['plateau']);
-  } else {
-    echo "non";
-  }
-  */
   repartition_cas($link);
 }
 
@@ -378,6 +370,9 @@ function set_coups_vues($retour,$link) {
   }
 }
 
+/*
+Fonctions permettant de renvoyer les coups et les vues pour une pièce dans un sitution particulière
+*/
 
 function coups_vues_par_piece($piece,$plateau,$cote) {
   /*
