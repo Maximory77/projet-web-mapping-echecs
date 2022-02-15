@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>echiquier</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+
+  </head>
+  <body>
+
+    <h1> tests unitaires </h1>
+    <p> ouvrez la console pour obtenir les résultats </p>
+
+    <select id="test">
+      <option value="0" selected>Selectionnez un test</option>
+      <option value="1">recevoir options premier coup</option>
+      <option value="2">jouer premier coup</option>
+      <option value="3">recevoir coup adversaire sans le voir</option>
+      <option value="4">recevoir coup adversaire en voyant l'arrivée</option>
+      <option value="5">recevoir coup adversaire en voyant le départ</option>
+      <option value="6">recevoir coup adversaire en voyant l'intégralité</option>
+      <option value="7">jouer un coup lambda</option>
+      <option value="8">attente du coup de l'adversaire</option>
+      <option value="9">prendre un pion adverse</option>
+    </select>
+    <button id="ok">OK</button>
+
+    <p id='explications'>Les informations liées au test unitaire s'afficheront ici</p>
+
+    <script type="text/javascript" src="test_unit_maj.js"></script>
+
+
+  </body>
+</html>
