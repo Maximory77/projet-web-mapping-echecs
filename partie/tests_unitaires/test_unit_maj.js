@@ -30,7 +30,7 @@ button_ok.addEventListener("click", function() {
     display(partie,id_joueur,cote,tour,trait,coup);
   }
   if (value == 3) {
-    explications.innerText = "Le joueur noir (j1) reçoit la confirmation du coup joué par j2 (pion (2,1) en (4,1)) il obtient les coups disponibles, dans ce cas il ne voit que la position finale du pion joué par l'adversaire";
+    explications.innerText = "Le joueur noir (j1) reçoit la confirmation du coup joué par le joueur blanc (j2) : pion (2,1) en (4,1), il obtient les coups disponibles, dans ce cas il ne voit que la position finale du pion joué par l'adversaire";
     var partie = 3;
     var id_joueur = "j1";
     var cote = 2;
@@ -49,6 +49,27 @@ button_ok.addEventListener("click", function() {
     var coup = null;
     display(partie,id_joueur,cote,tour,trait,coup);
   }
+  if (value == 5) {
+    explications.innerText = "Le joueur noir (j1) reçoit la confirmation du coup joué par j2 (coup impossible (6,1) en (2,1)), il obtient les coups disponibles, dans ce cas il ne voit que la position initale du pion joué par l'adversaire";
+    var partie = 5;
+    var id_joueur = "j1";
+    var cote = 2;
+    var tour = 1;
+    var trait = 1;
+    var coup = null;
+    display(partie,id_joueur,cote,tour,trait,coup);
+  }
+  if (value == 6) {
+    explications.innerText = "Le joueur noir (j1) reçoit la confirmation du coup joué par j2 (coup impossible (6,1) en (6,2)), il obtient les coups disponibles, dans ce cas il ne voit tout le coup joué par l'adversaire";
+    var partie = 6;
+    var id_joueur = "j1";
+    var cote = 2;
+    var tour = 1;
+    var trait = 1;
+    var coup = null;
+    display(partie,id_joueur,cote,tour,trait,coup);
+  }
+
 })
 
 
