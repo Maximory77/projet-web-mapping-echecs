@@ -69,7 +69,45 @@ button_ok.addEventListener("click", function() {
     var coup = null;
     display(partie,id_joueur,cote,tour,trait,coup);
   }
-
+  if (value == 7) {
+    explications.innerText = "Le joueur noir (j1) a reçu la confirmation du coup joué par j2, il va jouer le premier coup proposé (7,1) en (5,1), on constate qu'il peut voir le pion blanc en face de lui puisque les deux pions à gauche du plateau ont chacun monté de 2 cases";
+    var partie = 7;
+    var id_joueur = "j1";
+    var cote = 2;
+    var tour = 1;
+    var trait = 2;
+    var coup = 1;
+    display(partie,id_joueur,cote,tour,trait,coup);
+  }
+  if (value == 8) {
+    explications.innerText = "Le joueur blanc (j2) attend le coup de l'adversaire";
+    var partie = 7;
+    var id_joueur = "j2";
+    var cote = 1;
+    var tour = 1;
+    var trait = 2;
+    var coup = null;
+    display(partie,id_joueur,cote,tour,trait,coup);
+  }
+  if (value == 9) {
+    explications.innerText = "Le joueur blanc (j2) va prendre un pion adverse, dans le plateau mis à jour on voit le pion P22 avec des coordonnées null";
+    var partie = 9;
+    var id_joueur = "j2";
+    var cote = 1;
+    var tour = 2;
+    var trait = 1;
+    var coup = 2;
+    display(partie,id_joueur,cote,tour,trait,coup);
+  }
+  if (value == 10) {
+    explications.innerText = "Le joueur noir (j1) reçoit le coup, il s'est fait prendre un pion";
+    var partie = 10;
+    var id_joueur = "j1";
+    var cote = 2;
+    var tour = 1;
+    var trait = 2;
+    display(partie,id_joueur,cote,tour,trait,coup);
+  }
 })
 
 
