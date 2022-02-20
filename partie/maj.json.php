@@ -47,42 +47,48 @@ function repartition_cas($link) {
     $table = 'parties_test_unitaire';
   }
   $coup = "null";
-  if (isset($_GET['coup'])) {
-    $coup = $_GET['coup'];
+  if (isset($_GET['coup'])) { // si on n'a pas envoyé de coup
+    if ($_GET['coup']!='undefined') { // ou qu'il a été envoyé mais non rempli
+      $coup = $_GET['coup'];
+    }
   }
 
   // on effectue toutes les vérifications avant de répartir la tache vers les différentes fonctions
-  $requete = "SELECT j1,j2,tour,trait FROM $table WHERE id = $partie";
+  $requete = "SELECT j1,j2,tour,trait,nul FROM $table WHERE id = $partie";
   if ($result_BDD = mysqli_query($link,$requete)) {
     $resultat = mysqli_fetch_assoc($result_BDD);
     // on vérifie que le joueur correspond au bon côté
     if (($id_joueur==$resultat['j1'] AND $cote==2) OR ($id_joueur==$resultat['j2'] AND $cote==1)) {
-      // on vérifie que la partie en est au stade indiqué par les param "tour" et "trait"
-      if ($tour==$resultat['tour'] AND $trait==$resultat['trait']) { // A JOUR
-        // si on est à jour c'est qu'on veut jouer ou que c'est encore à l'adversaire de jouer
-        if (($coup != "null")) { // le client a lancé un coup
-          je_joue($_GET['coup'],$cote,$partie,$tour,$link,$table);
-          /*
+      if ($resultat['nul']==1) { // on vérifie si une demande de nul a été faite
+        echo json_encode(array("nul"=>"demande de nul"));
+      } else { // sinon on continue
+        // on vérifie que la partie en est au stade indiqué par les param "tour" et "trait"
+        if ($tour==$resultat['tour'] AND $trait==$resultat['trait']) { // A JOUR
+          // si on est à jour c'est que le joueur joue ou que c'est à l'adversaire de jouer
+          if (($coup != "null")) { // le client a lancé un coup
+            je_joue($_GET['coup'],$cote,$partie,$tour,$link,$table);
+            /*
             - gérer demande abandon joueur
             - gérer la prise en passant et le roque
             - gérer mise en echec
             - vues perdues
+            */
+          } else if ($cote!=$resultat['trait']) { // si on attend le coup de l'adversaire
+            echo json_encode(array('ras' => 1));
+          } else if ($tour==1 AND $trait==1) { // s'il s'agit du tout début du jeu il faut renvoyer les possibilités aux blancs
+            premier_coup($partie,$link,$table);
+          } else {
+            echo json_encode(array('erreur' => "aucune des situations ne correspond"));
+          }
+        } else { // si on n'est pas à jour c'est que l'adversaire a joué => MAJ
+          il_joue($link,$table,$cote);
+          /*
+          - gérer la prise en passant et le roque
+          - gérer demande nul adv
+          - gérer mise en échec
+          - vues perdues
           */
-        } else if ($cote!=$resultat['trait']) { // si on attend le coup de l'adversaire
-          echo json_encode(array('ras' => 1));
-        } else if ($tour==1 AND $trait==1) { // s'il s'agit du tout début du jeu il faut renvoyer les possibilités aux blancs
-          premier_coup($partie,$link,$table);
-        } else {
-          echo json_encode(array('erreur' => "aucune des situations ne correspond"));
         }
-      } else { // si on n'est pas à jour c'est que l'adversaire a joué => MAJ
-        il_joue($link,$table,$cote);
-        /*
-        - gérer la prise en passant et le roque
-        - gérer demande abandon adv
-        - gérer mise en échec
-        - vues perdues
-        */
       }
     } else {
       echo json_encode(array('erreur' => "Le joueur ne correspond pas au cote en entree."));
@@ -300,7 +306,7 @@ function il_joue($link,$table,$cote) {
     $retour = verif_coords_depart_vues($coords_coup_adv,$retour,$plateau);
     $retour = verif_coords_fin_vues($coords_coup_adv,$retour,$plateau);
   } else {
-    echo json_encode(array("erreur" => "Erreur de requete de base de donnees 3."));
+    echo json_encode(array("erreur" => "Erreur de requete de base de donnees"));
   }
   // on met à jour la colonne histo du joueur dans la base de données
   $histo_joueur['histo'][strval(sizeof($histo_joueur['histo']))] = $retour;
