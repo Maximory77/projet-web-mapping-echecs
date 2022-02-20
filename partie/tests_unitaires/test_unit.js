@@ -80,7 +80,6 @@ button_ok.addEventListener("click", function() {
     var cote = 1;
     var tour = 1;
     var trait = 2;
-    var coup = null;
     display_maj(partie,id_joueur,cote,tour,trait,coup);
   }
   if (value == 9) {
@@ -128,7 +127,7 @@ button_ok.addEventListener("click", function() {
     var id_joueur = "j1";
     var cote = 2;
     var nul = 1;
-    display_nul_abandon(partie,id_joueur,cote,coup,nul);
+    display_nul_abandon(partie,id_joueur,cote,nul,abandon);
   }
   if (value == 14) {
     explications.innerText = "Le joueur 1 a demandé le nul, le joueur 2 reçoit cette demande via une requete vers maj.json.php";
@@ -156,6 +155,32 @@ button_ok.addEventListener("click", function() {
     var nul = 0;
     display_nul_abandon(partie,id_joueur,cote,coup,nul);
   }
+  if (value == 17) {
+    explications.innerText = "Le joueur noir (j1) abandonne la partie, il en fait la requete à nul_abandon.json.php";
+    var partie = 7;
+    var id_joueur = "j1";
+    var cote = 2;
+    var abandon = 1;
+    display_nul_abandon(partie,id_joueur,cote,nul,abandon);
+  }
+  if (value == 18) {
+    explications.innerText = "Le joueur blanc (j2) va apprendre que la partie est finie et qu'il a gagné";
+    var partie = 18;
+    var id_joueur = "j2";
+    var cote = 1;
+    var tour = 1;
+    var trait = 2;
+    display_maj(partie,id_joueur,cote,tour,trait,coup);
+  }
+  if (value == 19) {
+    explications.innerText = "Le joueur noir (j1) reçoit la confirmation du coup joué par le joueur blanc (j2) : il a les deux roques possibles";
+    var partie = 19;
+    var id_joueur = "j1";
+    var cote = 2;
+    var tour = 1;
+    var trait = 1;
+    display_maj(partie,id_joueur,cote,tour,trait,coup);
+  }
 })
 
 
@@ -175,13 +200,13 @@ function display_maj(partie,id_joueur,cote,tour,trait,coup) {
     console.log(r)
   })
 }
-function display_nul_abandon(partie,id_joueur,cote,coup,nul) {
+function display_nul_abandon(partie,id_joueur,cote,nul,abandon) {
   fetch('../nul_abandon.json.php?  partie=' + partie
                         + '&id_joueur="' + id_joueur
                         + '"&cote=' + cote
                         + '&test_unit=' + test_unit
-                        + '&coup=' + coup
                         + '&nul=' + nul
+                        + '&abandon=' + abandon
                         )
   .then(r => r.text())
   .then(r => {

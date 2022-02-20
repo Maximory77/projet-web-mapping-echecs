@@ -59,8 +59,8 @@ function repartition_cas($link) {
     $resultat = mysqli_fetch_assoc($result_BDD);
     // on vérifie que le joueur correspond au bon côté
     if (($id_joueur==$resultat['j1'] AND $cote==2) OR ($id_joueur==$resultat['j2'] AND $cote==1)) {
-      if ($resultat['fin'] != 0) { // si la partie est terminée
-        echo json_encode(array("fin"=>"fin"));
+      if ($resultat['fin'] != 0) { // si la partie est terminée on renvoie le côté du gagnant
+        echo json_encode(array("fin" => $resultat['fin']));
       } else { // sinon on continue
         if ($resultat['nul']==1) { // on vérifie si une demande de nul a été faite
           echo json_encode(array("nul"=>"demande de nul"));
@@ -70,12 +70,6 @@ function repartition_cas($link) {
             // si on est à jour c'est que le joueur joue ou que c'est à l'adversaire de jouer
             if (($coup != "null")) { // le client a lancé un coup
               je_joue($_GET['coup'],$cote,$partie,$tour,$link,$table);
-              /*
-              - gérer abandon joueur
-              - gérer la prise en passant et le roque
-              - gérer la fin de partie
-              - vues perdues
-              */
             } else if ($cote!=$resultat['trait']) { // si on attend le coup de l'adversaire
               echo json_encode(array('ras' => 1));
             } else if ($tour==1 AND $trait==1) { // s'il s'agit du tout début du jeu il faut renvoyer les possibilités aux blancs
@@ -92,7 +86,7 @@ function repartition_cas($link) {
       echo json_encode(array('erreur' => "Le joueur ne correspond pas au cote en entree."));
     }
   } else {
-    echo json_encode(array('erreur' => "Erreur de requete de base de donnees 1."));
+    echo json_encode(array('erreur' => "Erreur de requete de base de donnees."));
   }
 }
 
@@ -180,7 +174,7 @@ function je_joue($i_coup,$cote,$partie,$tour,$link,$table) {
                                             fin = $cote,
                                             tour = $tour
                                             WHERE id = $partie";
-        $retour["fin"] = "victoire"; // on avertit alors le joueur de sa victoire
+        $retour["fin"] = $cote; // on avertit alors le joueur de sa victoire
       } else { // sinon
         // on met à jour la BDD avec le trait
         $requete_MAJ = "UPDATE $table SET   histo" . $cote . " = '$histo_joueur_MAJ_str',
@@ -536,7 +530,7 @@ function roi($piece,$plateau,$cote) {
   $coups_par_roi = array();
   $i_r = $plateau[$piece]["i"];
   $j_r = $plateau[$piece]["j"];
-  // on va parcourir les cases atteintes par le cavalier
+  // on va parcourir les cases atteintes par le roi
   foreach(array(array($i_r-1,$j_r-1),array($i_r,$j_r-1),array($i_r+1,$j_r-1),
                 array($i_r-1,$j_r+1),array($i_r,$j_r+1),array($i_r+1,$j_r+1),
                 array($i_r-1,$j_r),array($i_r+1,$j_r)) as $coord_expl) {
@@ -551,6 +545,36 @@ function roi($piece,$plateau,$cote) {
           $coups_par_roi[] = [$i_r,$j_r,$i_expl,$j_expl,$occupee[0]]; // la pièce peut prendre celle sur la case explorée
         }
       }
+    }
+  }
+  // la suite prend en compte le roque
+  if (($j_r==5) and (($i_r==1 and $cote=1)or($i_r==8 and $cote=2))) { // si le roi est bien à sa place d'origine
+    // on commence par le grand roque
+    if ($plateau["T" . $cote . "1"]["j"] == 1) { // si la tour 1 est bien en place (grand roque)
+      foreach(array(2,3,4) as $j_expl) { // on parcourt les cases entre la tour 1 et le roi
+        $grand_roque = true;
+        if (occupee($plateau,$i_r,$j_expl)!=false) { // si l'une d'elle est prise
+          $grand_roque = false; // on annule le grand roque
+          break;
+        }
+      }
+    }
+    // puis le petit roque
+    if ($plateau["T" . $cote . "2"]["j"] == 8) { // si la tour 2 est bien en place (petit roque)
+      foreach(array(6,7) as $j_expl) { // on parcourt les cases entre la tour 2 et le roi
+        $petit_roque = true;
+        if (occupee($plateau,$i_r,$j_expl)!=false) { // si l'une d'elle est prise
+          $petit_roque = false; // on annule le petit roque
+          break;
+        }
+      }
+    }
+    // enfin, on donne les coups possibles
+    if ($grand_roque) { // si le grand roque est bien possible
+      $coups_par_roi[] = [$i_r,$j_r,$i_r,1,"roque"];
+    }
+    if ($petit_roque) { // si le petit roque est bien possible
+      $coups_par_roi[] = [$i_r,$j_r,$i_r,8,"roque"];
     }
   }
   return array("coups"=>$coups_par_roi,"vues"=>array()); // on renvoie alors le résultat
