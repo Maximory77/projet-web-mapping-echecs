@@ -1,4 +1,3 @@
-
 var test_unit = true;
 var select = document.getElementById('test');
 var explications = document.getElementById("explications");
@@ -101,6 +100,26 @@ button_ok.addEventListener("click", function() {
     var cote = 2;
     var tour = 1;
     var trait = 2;
+    display_maj(partie,id_joueur,cote,tour,trait,coup);
+  }
+  if (value == 11) {
+    explications.innerText = "Le joueur noir (j1) a reçu la confirmation du coup joué par j2, il va jouer le premier coup proposé (8,4) en (1,4), ce coup fictif va mettre en échec le roi adverse";
+    var partie = 11;
+    var id_joueur = "j1";
+    var cote = 2;
+    var tour = 1;
+    var trait = 2;
+    var coup = 0;
+    display_maj(partie,id_joueur,cote,tour,trait,coup);
+  }
+  if (value == 12) {
+    explications.innerText = "Le joueur noir (j1) a reçu la confirmation du coup joué par j2, il va jouer le deuxième coup proposé (8,5) en (3,5), ce coup fictif va mettre en échec le roi adverse";
+    var partie = 11;
+    var id_joueur = "j1";
+    var cote = 2;
+    var tour = 1;
+    var trait = 2;
+    var coup = 1;
     display_maj(partie,id_joueur,cote,tour,trait,coup);
   }
   if (value == 13) {
