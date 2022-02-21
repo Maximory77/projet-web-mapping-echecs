@@ -173,12 +173,42 @@ button_ok.addEventListener("click", function() {
     display_maj(partie,id_joueur,cote,tour,trait,coup);
   }
   if (value == 19) {
-    explications.innerText = "Le joueur noir (j1) reçoit la confirmation du coup joué par le joueur blanc (j2) : il a les deux roques possibles";
+    explications.innerText = "Le joueur noir (j1) reçoit la confirmation du coup joué par le joueur blanc (j2) : il peut joueur les deux roques (pr et gr), une prise en passant (pp) et une promotion en prenant un cavalier (pX)";
     var partie = 19;
     var id_joueur = "j1";
     var cote = 2;
     var tour = 1;
     var trait = 1;
+    display_maj(partie,id_joueur,cote,tour,trait,coup);
+  }
+  if (value == 20) {
+    explications.innerText = "Le joueur noir (j1) a reçu la confirmation du coup joué par j2, il va jouer le petit roque : dans le plateau mis à jour on voit bien les coordonnées du roi noir R2 à (8,7) et les coordonnées de la tour noire T22 à (8,6)";
+    var partie = 20;
+    var id_joueur = "j1";
+    var cote = 2;
+    var tour = 1;
+    var trait = 2;
+    var coup = 32;
+    display_maj(partie,id_joueur,cote,tour,trait,coup);
+  }
+  if (value == 21) {
+    explications.innerText = "Le joueur noir (j1) a reçu la confirmation du coup joué par j2, il va jouer la prise en passant : dans le plateau maj le pion P22 est bien en (3,1) et le pion pris P11 a bien ses coordonnées nulles.";
+    var partie = 20;
+    var id_joueur = "j1";
+    var cote = 2;
+    var tour = 1;
+    var trait = 2;
+    var coup = 33;
+    display_maj(partie,id_joueur,cote,tour,trait,coup);
+  }
+  if (value == 22) {
+    explications.innerText = "Le joueur noir (j1) a reçu la confirmation du coup joué par j2, le pion en (2,8) va prendre le cavalier en (1,7) et sera ainsi promu en une tour : le nouveau plateau n'a plus P28 et on observe une nouvelle tour à sa place T2promu, le cavalier C12 a bien été pris";
+    var partie = 20;
+    var id_joueur = "j1";
+    var cote = 2;
+    var tour = 1;
+    var trait = 2;
+    var coup = 17;
     display_maj(partie,id_joueur,cote,tour,trait,coup);
   }
 })
