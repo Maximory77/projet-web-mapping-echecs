@@ -73,7 +73,7 @@ function repartition_cas($link) {
             } else if ($cote!=$resultat['trait']) { // si on attend le coup de l'adversaire
               echo json_encode(array("ras" => 1));
             } else if ($tour==1 AND $trait==1) { // s'il s'agit du tout début du jeu il faut renvoyer les possibilités aux blancs
-              premier_coup($partie,$link,$table);
+              premier_coup($partie,$link,$table,$cote);
             } else {
               echo json_encode(array("erreur" => "aucune des situations ne correspond."));
             }
@@ -96,27 +96,33 @@ Fonctions permettant de donner aux blanc les coups pour débuter la partie
 */
 
 
-function premier_coup($partie,$link,$table) {
+function premier_coup($partie,$link,$table,$cote) {
   /*
   La partie n'a pas débuté, on veut renvoyer les coups possibles par les blancs
   */
   $retour = array("coups" => [],"vues"=>[]); // initilialisation de l'array envoyé en retour
   // on met à jour les coups et les vues dans l'array $retour
-  $retour = set_coups_vues($retour,$plateau,$cote,$coords_coup_adv);
-  // On peut alors mettre à jour la BDD
-  $histo_joueur_MAJ_str = strval(json_encode(array("histo"=>array($retour))));
-  if (!(isset($_GET['test_unit']))) { // si on teste le programme, il est inutile de mettre à jour la BDD
+  $requete_plateau = "SELECT plateau FROM $table WHERE id = $partie";
+  if ($result_plateau = mysqli_query($link,$requete_plateau)) {
+    $result_plateau = mysqli_fetch_assoc($result_plateau);
+    $coords_coup_adv = null; // pas de coordonnées de l'adversaire
+    $plateau = json_decode($result_plateau["plateau"],true);
+    $retour = set_coups_vues($retour,$plateau,$cote,$coords_coup_adv);
+    // On peut alors mettre à jour la BDD
+    $histo_joueur_MAJ_str = strval(json_encode(array("histo"=>array($retour))));
     $requete_MAJ_histo = "UPDATE $table SET histo1 = '$histo_joueur_MAJ_str' WHERE id = $partie";
-    if ($result_histos = mysqli_query($link,$requete_MAJ_histo)) {
-      echo json_encode($retour); // s'il n'y a pas d'erreur de requete on peut renvoyer le json au joueur
-    } else {
-      echo json_encode(array("erreur" => "Erreur de requete de base de donnees 4."));
+    if (!(isset($_GET['test_unit']))) { // si on teste le programme, il est inutile de mettre à jour la BDD
+      if ($result_histos = mysqli_query($link,$requete_MAJ_histo)) {
+        echo json_encode($retour); // s'il n'y a pas d'erreur de requete on peut renvoyer le json au joueur
+      } else {
+        echo json_encode(array("erreur" => "Erreur de requete de base de donnees."));
+      }
+    } else { // pour les tests unitaires on renvoie seulement l'histogramme mis à jour
+      echo "retour :\n";
+      echo json_encode($retour);
+      echo "\n \nrequete BDD :\n";
+      echo $requete_MAJ_histo;
     }
-  } else { // pour les tests unitaires on renvoie seulement l'histogramme mis à jour
-    echo "retour :\n";
-    echo json_encode($retour);
-    echo "\n \nrequete BDD :\n";
-    echo $requete_MAJ_histo;
   }
 }
 
@@ -416,8 +422,10 @@ function set_coups_vues($retour,$plateau,$cote,$coords_coup_adv) {
     $retour["coups"] = array_merge($retour["coups"],$retour_piece["coups"]);
     $retour["vues"] = array_merge($retour["vues"],$retour_piece["vues"]);
   }
-  // on rajoute les prises en passant
-  $retour = prise_en_passant($retour,$plateau,$cote,$coords_coup_adv);
+  if ($coords_coup_adv != null) { // lors du premier coup on n'a pas les coordonnées du joueur adverse
+    // on rajoute les prises en passant
+    $retour = prise_en_passant($retour,$plateau,$cote,$coords_coup_adv);
+  }
   return $retour;
 }
 
