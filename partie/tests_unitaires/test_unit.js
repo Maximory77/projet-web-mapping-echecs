@@ -226,6 +226,17 @@ button_ok.addEventListener("click", function() {
     var id_joueur = "j1";
     display_cr(partie,id_joueur);
   }
+  if (value == 24) {
+    explications.innerText = "Le joueur j2 demande à s'inscrire à une nouvelle partie";
+    var id_joueur = "j2";
+    display_nouvelle_partie(id_joueur);
+  }
+  if (value == 25) {
+    explications.innerText = "Le joueur j1 demande à s'inscrire à la partie d'identifiant 0 (base)";
+    var id_joueur = "j1";
+    var partie = 0;
+    display_inscription_partie(partie,id_joueur);
+  }
   afficher_parametres(partie,id_joueur,cote,tour,trait,coup,nul,abandon);
 })
 
@@ -266,6 +277,18 @@ function display_cr(partie,id_joueur) {
                         + '&id_joueur="' + id_joueur
                         + '"&test_unit=' + test_unit
                         )
+}
+function display_nouvelle_partie(id_joueur) {
+  php_html.innerText = "nouvelle_partie.json.php";
+  fetch('../nouvelle_partie.json.php?&id_joueur="' + id_joueur + '"&test_unit=' + test_unit)
+  .then(r => r.text())
+  .then(r => {
+    console.log(r)
+  })
+}
+function display_inscription_partie(partie,id_joueur) {
+  php_html.innerText = "nouvelle_partie.json.php";
+  fetch('../nouvelle_partie.json.php?&id_joueur="' + id_joueur + '"&test_unit=' + test_unit + '&partie=' + partie)
   .then(r => r.text())
   .then(r => {
     console.log(r)

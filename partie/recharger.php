@@ -1,8 +1,10 @@
 <?php
 /*
-Lorsque ce fichier est appelé : la partie est rechargée 
-utile pour les tests et donne base de code simple
-pour initialiser la ligne d'une partie
+Lorsque ce fichier est appelé : la partie est rechargée
+utile pour les tests et donne base de code simple afin d'initialiser la ligne d'une partie
+
+- on envoie un nom de joueur tout seul : créée nouvelle partie avec le joueur en coté 2
+- on envoie nom de joueur et une partie : met le joueur dans la partie
 */
 $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
 //Vérification du lien

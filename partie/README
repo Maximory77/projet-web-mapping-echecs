@@ -75,28 +75,51 @@
   - {"vues" : Lv} => toutes les cases vues par le joueur après son coup, sous la forme d'un coup dans la partie 4
   - {"erreur" : "Coup invalide"} => le joueur a mis son roi en échec
 
-  ## nul_abandon.json.php
+## nul_abandon.json.php
 
-  > Ce fichier permet de gérer les demandes/acceptations de nul et les abandons
+> Ce fichier permet de gérer les demandes/acceptations de nul et les abandons
 
-  ### Les entrées
+### Les entrées
 
-  - id_joueur : identifiant du joueur avec des double quotes ("id_joueur")
-  - partie : identifiant de la partie
-  - cote : côté du joueur (1 ou 2)
-  - nul (par défaut 0) : si égal à 1 on veut faire une demande ou une acceptation de nul
-  - abandon (par défaut 0) : si égal à 1 on abandonne la partie
-  - test_unitaire : si égal à true, on est dans les tests unitaires et la BDD ne sera ainsi pas modifiée
+- id_joueur : identifiant du joueur avec des double quotes ("id_joueur")
+- partie : identifiant de la partie
+- cote : côté du joueur (1 ou 2)
+- nul (par défaut 0) : si égal à 1 on veut faire une demande ou une acceptation de nul
+- abandon (par défaut 0) : si égal à 1 on abandonne la partie
+- test_unitaire : si égal à true, on est dans les tests unitaires et la BDD ne sera ainsi pas modifiée
 
 
-  ### Les sorties
+### Les sorties
 
-  > Comme le nom du fichier l'indique, les sorties sont sous forme de json
+> Comme le nom du fichier l'indique, les sorties sont sous forme de json
 
-  1. **erreurs générales** :
-    - {"erreur" : "Erreur de connexion à la base de données"} => mauvaise connexion à la BDD, certainement à cause de la connexion internet
-    - {"erreur" : "Erreur de requete de base de donnees"}
-    - {"erreur" : "aucune des situations ne correspond"}
-    - {"erreur" : "aucune des situations ne correspond"}
-  2. **CR** : json contenant les paramètres suivants
-    - {"requete" : "ok"} => il s'agit du seul retour pour indiquer au joueur que sa requête a bien été prise en compte
+1. **erreurs générales** :
+  - {"erreur" : "Erreur de connexion à la base de données"} => mauvaise connexion à la BDD, certainement à cause de la connexion internet
+  - {"erreur" : "Erreur de requete de base de donnees"}
+  - {"erreur" : "aucune des situations ne correspond"}
+  - {"erreur" : "aucune des situations ne correspond"}
+2. **CR** : json contenant les paramètres suivants
+  - {"requete" : "ok"} => il s'agit du seul retour pour indiquer au joueur que sa requête a bien été prise en compte
+
+## nouvelle_parte.json.php
+
+> Ce fichier permet de créer un nouvelle partie
+> Lorsque ce fichier est appelé :
+>  - on envoie un nom de joueur tout seul : on créée nouvelle partie avec le joueur en coté 2
+>  - on envoie nom de joueur et une partie : met le joueur dans la partie
+
+
+### Les entrées
+
+- id_joueur : identifiant du joueur avec des double quotes ("id_joueur")
+- partie : identifiant de la partie
+
+### Les sorties
+
+> Comme le nom du fichier l'indique, les sorties sont sous forme de json
+
+1. **erreurs générales** :
+  - {"erreur" : "Erreur de connexion à la base de données"} => mauvaise connexion à la BDD, certainement à cause de la connexion internet
+  - {"erreur" : "Erreur de requete de base de donnees"}
+2. **CR** : json contenant les paramètres suivants
+  - {"nouvelle_parte" : "ok"} => il s'agit du seul retour pour indiquer au joueur que sa requête a bien été prise en compte
