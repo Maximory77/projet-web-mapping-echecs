@@ -2,6 +2,15 @@ var test_unit = true;
 var select = document.getElementById('test');
 var explications = document.getElementById("explications");
 var button_ok = document.getElementById("ok");
+var php_html = document.getElementById("php");
+var partie_html = document.getElementById("partie");
+var id_joueur_html = document.getElementById("id joueur");
+var cote_html = document.getElementById("cote");
+var tour_html = document.getElementById("tour");
+var trait_html = document.getElementById("trait");
+var coup_html = document.getElementById("coup");
+var nul_html = document.getElementById("nul");
+var abandon_html = document.getElementById("abandon");
 
 console.log("c'est parti");
 
@@ -211,11 +220,18 @@ button_ok.addEventListener("click", function() {
     var coup = 17;
     display_maj(partie,id_joueur,cote,tour,trait,coup);
   }
+  if (value == 23) {
+    explications.innerText = "Le joueur noir (j1) demande un compte rendu";
+    var partie = 20;
+    var id_joueur = "j1";
+    display_cr(partie,id_joueur);
+  }
+  afficher_parametres(partie,id_joueur,cote,tour,trait,coup,nul,abandon);
 })
 
 
-
 function display_maj(partie,id_joueur,cote,tour,trait,coup) {
+  php_html.innerText = "maj.json.php";
   fetch('../maj.json.php?  partie=' + partie
                         + '&id_joueur="' + id_joueur
                         + '"&cote=' + cote
@@ -231,6 +247,7 @@ function display_maj(partie,id_joueur,cote,tour,trait,coup) {
   })
 }
 function display_nul_abandon(partie,id_joueur,cote,nul,abandon) {
+  php_html.innerText = "nul_abandon.json.php";
   fetch('../nul_abandon.json.php?  partie=' + partie
                         + '&id_joueur="' + id_joueur
                         + '"&cote=' + cote
@@ -242,4 +259,27 @@ function display_nul_abandon(partie,id_joueur,cote,nul,abandon) {
   .then(r => {
     console.log(r)
   })
+}
+function display_cr(partie,id_joueur) {
+  php_html.innerText = "cr.json.php";
+  fetch('../cr.json.php?  partie=' + partie
+                        + '&id_joueur="' + id_joueur
+                        + '"&test_unit=' + test_unit
+                        )
+  .then(r => r.text())
+  .then(r => {
+    console.log(r)
+  })
+}
+
+
+function afficher_parametres(partie,id_joueur,cote,tour,trait,coup,nul,abandon) {
+  partie_html.innerText = partie;
+  id_joueur_html.innerText =id_joueur;
+  cote_html.innerText = cote;
+  tour_html.innerText = tour;
+  trait_html.innerText = trait;
+  coup_html.innerText = coup;
+  nul_html.innerText = nul;
+  abandon_html.innerText = abandon;
 }

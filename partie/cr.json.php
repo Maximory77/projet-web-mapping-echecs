@@ -21,36 +21,44 @@ $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kev
 if (!$link) {
   echo json_encode(array('erreur' => "Erreur de connexion à la base de données"));
   die('Erreur de connexion');
+} else {
+  //Prévention de potentiels problèmes d'encodages
+  mysqli_set_charset($link, "utf8");
+
+  renvoyer_cr($link);
 }
 
-//Prévention de potentiels problèmes d'encodages
-mysqli_set_charset($link, "utf8");
+function renvoyer_cr($link) {
+  $table = 'parties'; // affectation de la table à utiliser : si on utilise les tests unitaires ou non
+  if (isset($_GET['test_unit'])) {
+    $table = 'parties_test_unitaire';
+  }
 
-if (isset($_GET['partie'])) {
+  if (isset($_GET['partie'])) {
 
-  // s'ils sont bien définis, on récupère les données en entrée
-  $partie = $_GET['partie'];
-  $id_joueur = $_GET['id_joueur'];
+    // s'ils sont bien définis, on récupère les données en entrée
+    $partie = $_GET['partie'];
+    $id_joueur = $_GET['id_joueur'];
 
-  // vérification id valide et correspond à un joueur inscrit sur la partie
-  $requete = "SELECT j1,j2,tour,trait,histo1,histo2 FROM parties WHERE id = $partie";
-  if ($result = mysqli_query($link,$requete)) {
-    while ($ligne = mysqli_fetch_assoc($result)) {
-      if ($ligne['j1'] == $id_joueur) { // s'il s'agit du joueur 1
-        $CR = array('tour' => $ligne['tour'], 'trait' => $ligne['trait'], 'cote' => 2, 'histo' => $ligne['histo1']);
+    // vérification id valide et correspond à un joueur inscrit sur la partie
+    $requete = "SELECT j1,j2,tour,trait,histo1,histo2 FROM $table WHERE id = $partie";
+    if ($result_BDD = mysqli_query($link,$requete)) {
+      $resultat = mysqli_fetch_assoc($result_BDD);
+      if ($resultat["j1"] == $id_joueur) { // s'il s'agit du joueur 1
+        $CR = array('tour' => $resultat['tour'], 'trait' => $resultat['trait'], 'cote' => 2, 'histo' => $resultat['histo1']);
         echo json_encode($CR);
-      } else if ($ligne['j2'] == $id_joueur) { // s'il s'agit du joeur 2
-        $CR = array('tour' => $ligne['tour'], 'trait' => $ligne['trait'], 'cote' => 1, 'histo' => $ligne['histo2']);
+      } else if ($resultat['j2'] == $id_joueur) { // s'il s'agit du joueur 2
+        $CR = array('tour' => $resultat['tour'], 'trait' => $resultat['trait'], 'cote' => 1, 'histo' => $resultat['histo2']);
         echo json_encode($CR);
       } else {
         echo json_encode(array('erreur' => "Ce participant n'est pas sur cette partie"));
       }
+    } else {
+      echo json_encode(array('erreur' => "Erreur de requete de base de donnees."));
     }
   } else {
-    echo json_encode(array('erreur' => "Erreur de requete de base de donnees 1."));
+    echo json_encode(array('erreur' => "Erreur de paramètres en entrée"));
   }
-} else {
-  echo json_encode(array('erreur' => "Erreur de paramètre en entrée"));;
 }
 
 
