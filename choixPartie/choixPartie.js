@@ -1,17 +1,53 @@
 // A relier avec le bon id
-let bouton_observer = document.getElementById('observer');
-let bouton_rejoindre = document.getElementById('chargerPartie');
-let bouton_defier = document.getElementById('nouvellePartieAlea');
+let new_partie = document.getElementById('nouvellePartieAmis');
+let partie_encours = document.getElementById('chargerPartie');
+let partie_temp = document.getElementById('partie_temp');
+let liste_partie = document.getElementById('liste_partie');
 
 var emplacement_pseudo = document.getElementById('pseudo');
 var pseudo = localStorage.getItem('pseudo');
+var partie = localStorage.getItem('id_partie');
 
-console.log("bla");
+
 console.log(pseudo);
-console.log("blu");
+
 
 emplacement_pseudo.innerHTML = '<p><strong>'+pseudo+'</strong></p>';
 
+partie_temp.addEventListener('click', (a) => {
+  a.preventDefault();
+
+})
+
+partie_encours.addEventListener('click', (a) => {
+  a.preventDefault();
+
+})
+
+new_partie.addEventListener('click', (a) => {
+  a.preventDefault();
+
+  new_partie.style.display = "none";
+  partie_encours.style.display = "none";
+  partie_temp.style.display = "none";
+
+  fetch('../log/nouvellePartie.json.php')
+  .then(r => r.json())
+  .then(r => {
+    bd_joueurs = r;
+
+
+    let tableau_joueurs = document.createElement('table');
+    tableau_joueurs.innerHTML = '<tr><th>Id</th><th>Nom</th><th>Défier ce joueur</th></tr>';
+    for (let i=0; i<bd_joueurs.length; i++){
+      if (pseudo != bd_joueurs[i].nom){
+        let nom_joueur = bd_joueurs[i].nom;
+        tableau_joueurs.insertAdjacentHTML('beforeend', '<tr><td>'+nom_joueur+'</td><td><form class="formulaire" action="partie.html" method="post"><button type="submit" id="defier">Défier</button></form></td></tr>');
+        liste_partie.
+      }
+    }
+  })
+})
 
 // bouton_observer.addEventListener('click', () => {
 //   // Vérifier l'id
@@ -93,4 +129,3 @@ emplacement_pseudo.innerHTML = '<p><strong>'+pseudo+'</strong></p>';
 
 
 ///// popup lorsque l'on veut changer de page lorsqu'une partie est en cours
-///// afficher le bouton connection si on est pas connecté, deconnection si on est connecté
