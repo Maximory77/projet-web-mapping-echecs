@@ -14,7 +14,9 @@ let pagesuivante_regis = document.getElementById('pagesuivante_regis');
 var bd_auth;
 var bd_regis;
 
-
+// Vide le local storage si il en existait un, permet de "déconnecter" une personne
+localStorage.removeItem("pseudo");
+console.log(localStorage.getItem('pseudo'));
 
 $('.message a').click(function(){
    $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
@@ -25,7 +27,8 @@ $('.message a').click(function(){
 
 // Ajout des event listeners sur les boutons
 // Bouton d'inscription
-bouton_regis.addEventListener('click', () => {
+bouton_regis.addEventListener('click', (a) => {
+  a.preventDefault();
   erreur_regis.innerHTML = "";
   let pseudo_regis = document.getElementById('pseudo_regis');
   let mdp_regis = document.getElementById('mdp_regis');
@@ -63,6 +66,7 @@ bouton_regis.addEventListener('click', () => {
           .then(r => {
             bd_regis=r;
             // On passe sur la page suivante
+            localStorage.setItem('pseudo', pseudo_regis.value);
             pseudo_regis.style.display = "none";
             mdp_regis.style.display = "none";
             mail_regis.style.display = "none";
@@ -74,22 +78,26 @@ bouton_regis.addEventListener('click', () => {
   })
 });
 
- 
+
 // Bouton de connexion
-bouton_login.addEventListener('click', () => {
+bouton_login.addEventListener('click', (a) => {
+  a.preventDefault();
   erreur_login.innerHTML = ""
   let pseudo_login = document.getElementById('pseudo_login');
   let mdp_login = document.getElementById('mdp_login');
   let bouton_login = document.getElementById('bouton_login');
+  console.log("test");
   fetch('../log/auth.json.php')
   .then(r => r.json())
   .then(r => {
+    console.log("blofregberjgberbghergbverhjbfgerjhbgerjbferg");
     bd_auth = r;
 
     // On regarde dans la base de données si le pseudo et le mot de passe donnés sont dans la base de données
     for (let i=0; i<bd_auth.length; i++){
       if(pseudo_login.value == bd_auth[i].nom && mdp_login.value == bd_auth[i].mdp){
         //L'authentification a fonctionné, on modifie l'affichage et on passe à la page de choix des parties
+        localStorage.setItem('pseudo', pseudo_login.value);
         pseudo_login.style.display = "none";
         mdp_login.style.display = "none";
         bouton_login.style.display = "none";
