@@ -6,10 +6,6 @@ let bouton_defier = document.getElementById('nouvellePartieAlea');
 var emplacement_pseudo = document.getElementById('pseudo');
 var pseudo = localStorage.getItem('pseudo');
 
-console.log("bla");
-console.log(pseudo);
-console.log("blu");
-
 emplacement_pseudo.innerHTML = '<p><strong>'+pseudo+'</strong></p>';
 
 

@@ -1,8 +1,5 @@
 // Récupère les éléments HTML nécessaires
 let bouton_regis = document.getElementById('bouton_regis');
-
-// let pseudo_login = document.getElementById('pseudo_login');
-// let mdp_login = document.getElementById('mdp_login');
 let bouton_login = document.getElementById('bouton_login');
 
 let erreur_login = document.getElementById('erreur_login');
@@ -16,7 +13,6 @@ var bd_regis;
 
 // Vide le local storage si il en existait un, permet de "déconnecter" une personne
 localStorage.removeItem("pseudo");
-console.log(localStorage.getItem('pseudo'));
 
 $('.message a').click(function(){
    $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
@@ -86,11 +82,9 @@ bouton_login.addEventListener('click', (a) => {
   let pseudo_login = document.getElementById('pseudo_login');
   let mdp_login = document.getElementById('mdp_login');
   let bouton_login = document.getElementById('bouton_login');
-  console.log("test");
   fetch('../log/auth.json.php')
   .then(r => r.json())
   .then(r => {
-    console.log("blofregberjgberbghergbverhjbfgerjhbgerjbferg");
     bd_auth = r;
 
     // On regarde dans la base de données si le pseudo et le mot de passe donnés sont dans la base de données
