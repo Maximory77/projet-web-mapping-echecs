@@ -13,7 +13,7 @@ var type_piece_select="";
 var case_arrive="";
 var rep_iframe="";
 var bool_promo=false;
-var tab_promotion=["case44","case81", "case82", "case83", "case84", "case85", "case86", "case87","case88"];
+var tab_promotion=["case81", "case82", "case83", "case84", "case85", "case86", "case87","case88"];
 
 //initialisation des attribut pour les envoies au serveur
 var partie = 10;
