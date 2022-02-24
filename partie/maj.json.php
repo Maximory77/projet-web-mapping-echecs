@@ -328,8 +328,8 @@ function il_joue($link,$table,$cote) {
     // on met à jour les coups et les vues dans l'array $retour
     $retour = set_coups_vues($retour,$plateau,$cote,$coords_coup_adv);
     // on teste alors si on peut ajouter les coordonnées et la nature ou si elles restent cachées
-    if (sizeof($coords_coup_adv) == 5) {
-      $retour["pion pris"] = json_encode(array("i"=>$coords_coup_adv[2],"j"=>$coords_coup_adv[3],"pion"=>$coords_coup_adv[4]));
+    if (strlen($coords_coup_adv[4]) == 1) { // si on s'est fait prendre une pièce
+      $retour["pion pris"] = array("i"=>$coords_coup_adv[2],"j"=>$coords_coup_adv[3],"pion"=>$coords_coup_adv[4]);
     }
     $retour = verif_coords_depart_vues($coords_coup_adv,$retour,$plateau);
     $retour = verif_coords_fin_vues($coords_coup_adv,$retour,$plateau);
