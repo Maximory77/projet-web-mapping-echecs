@@ -329,7 +329,7 @@ function il_joue($link,$table,$cote) {
     $retour = set_coups_vues($retour,$plateau,$cote,$coords_coup_adv);
     // on teste alors si on peut ajouter les coordonnées et la nature ou si elles restent cachées
     if (strlen($coords_coup_adv[4]) == 1) { // si on s'est fait prendre une pièce
-      $retour["pion pris"] = array("i"=>$coords_coup_adv[2],"j"=>$coords_coup_adv[3],"pion"=>$coords_coup_adv[4]);
+      $retour["pion pris"] = array("i_dep"=>$coords_coup_adv[0],"j_dep"=>$coords_coup_adv[1],"i"=>$coords_coup_adv[2],"j"=>$coords_coup_adv[3],"pion"=>$coords_coup_adv[4],"pion adv"=>occupee($plateau,$coords_coup_adv[1],$coords_coup_adv[2]));
     }
     $retour = verif_coords_depart_vues($coords_coup_adv,$retour,$plateau);
     $retour = verif_coords_fin_vues($coords_coup_adv,$retour,$plateau);

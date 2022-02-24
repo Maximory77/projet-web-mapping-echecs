@@ -237,16 +237,6 @@ button_ok.addEventListener("click", function() {
     var partie = 0;
     display_inscription_partie(partie,id_joueur);
   }
-  if (value == 26) {
-    explications.innerText = "Le joueur noir (j1) a reçu la confirmation du coup joué par j2, il s'est fait prendre un pion, il va jouer le coup";
-    var partie = 20;
-    var id_joueur = "j1";
-    var cote = 2;
-    var tour = 1;
-    var trait = 2;
-    var coup = 1;
-    display_maj(partie,id_joueur,cote,tour,trait,coup);
-  }
   afficher_parametres(partie,id_joueur,cote,tour,trait,coup,nul,abandon);
 })
 

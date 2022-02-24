@@ -68,7 +68,7 @@
   	- vue = [i_piece_pouvant_voir,j_piece_pouvant_voir,i_piece_vue,j_piece_vue,nature_piece_vue]
   - {"fin" : "x"} => la partie est finie, x désigne le côté du joueur gagnant
   - {"il_joue" : [0,0,0,0]}
-  - {"pion pris" : x} => x = 0 ou {"i" : i, "j" : j, "pion" : "N"} avec i et j les coordonnées du pion pris et "N" la nature de la pièce prise (P,T,F,R,D,C)
+  - {"pion pris" : x} => x = 0 ou {"i" : i, "j" : j, "pion" : "N pris","i_dep":i_dep,"j_dep":j_dep,"pion adv":"N adv"} avec i et j les coordonnées du pion pris, i_dep et j_dep les coordonnées du pion ayant pris, "N pris" la nature de la pièce prise et "N adv" celle de la pièce l'ayant pris (P,T,F,R,D,C)
   - {"nature" : "N"} => si l'adversaire a joué une pièce qu'on peut voir, N peut être P, T, F, R, D ou C
 5. **le joueur joue son coup** :
   - {"je_joue" : coup} => coup joué par le joueur ayant lancé la requête : sous la forme d'un coup dans la partie 4
