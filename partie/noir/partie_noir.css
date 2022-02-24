@@ -95,6 +95,9 @@ body {
 .case_blanche_case{
 background-color:#e6e5d0;
 }
+.case_brouillard{
+  background-color: #cdbd94;
+}
 
 
 #options {
@@ -116,3 +119,4 @@ background-color:#e6e5d0;
     margin-top: 1em;
     margin-bottom: 5em;
 }
+
