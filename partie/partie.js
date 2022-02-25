@@ -3,9 +3,11 @@
 var plateau =  document.getElementById('plateau');
 var promo =  document.getElementById('promo');
 var container =  document.getElementById('container');
+var emplacement_pseudo = document.getElementById('pseudo');
 var verif;
 var promotion = document.createElement('iframe');
 promotion.id="promotion";
+var pseudo = localStorage.getItem('pseudo');
 
 //initialisation des variables des pieces déplacés
 var surligne=[];
@@ -14,6 +16,9 @@ var type_piece_select="";
 var case_arrive="";
 var rep_iframe="";
 var bool_promo=false;
+
+//Pseudo du joueur retenu dans la page
+emplacement_pseudo = pseudo;
 
 // FONCTIONS UTILES
 //permet de remettre les cases de la bonne couleur des cases surlignées

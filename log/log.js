@@ -1,7 +1,5 @@
+// Récupère les éléments HTML nécessaires
 let bouton_regis = document.getElementById('bouton_regis');
-
-// let pseudo_login = document.getElementById('pseudo_login');
-// let mdp_login = document.getElementById('mdp_login');
 let bouton_login = document.getElementById('bouton_login');
 
 let erreur_login = document.getElementById('erreur_login');
@@ -13,7 +11,9 @@ let pagesuivante_regis = document.getElementById('pagesuivante_regis');
 var bd_auth;
 var bd_regis;
 
-
+// Vide le local storage si il en existait un, permet de "déconnecter" une personne
+localStorage.removeItem("pseudo");
+localStorage.removeItem("id_partie");
 
 $('.message a').click(function(){
    $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
@@ -22,13 +22,15 @@ $('.message a').click(function(){
 
 
 
-
-bouton_regis.addEventListener('click', () => {
+// Ajout des event listeners sur les boutons
+// Bouton d'inscription
+bouton_regis.addEventListener('click', (a) => {
+  a.preventDefault();
   erreur_regis.innerHTML = "";
   let pseudo_regis = document.getElementById('pseudo_regis');
   let mdp_regis = document.getElementById('mdp_regis');
   let mail_regis = document.getElementById('mail_regis');
-  // Fonction permettant de créer un compte à partir d'une adresse mail
+  // Permet de créer un compte à partir d'une adresse mail
   // On y associe un pseudo et un mot de passe
   fetch('../log/auth.json.php')
   .then(r => r.json())
@@ -40,11 +42,6 @@ bouton_regis.addEventListener('click', () => {
         erreur_regis.innerHTML = "<p>Ce pseudo est déjà utilisé</p>";
         break;
       }
-      // else if (mail_regis.value == bd_regis[i].mail){
-      //   // A chaque adresse mail n'est associé qu'un seul compte
-      //   erreur_regis.innerHTML = "<p>Un compte est déjà associé à cette adresse</p>";
-      //   break;
-      // }
       else if(mdp_regis.value.length<3){
         // Un mot de passe doit être de taille supérieure ou égale à 3 caractères
         erreur_regis.innerHTML = "<p>Veuillez choisir un mot de passe de 3 caractères ou plus</p>";
@@ -66,6 +63,7 @@ bouton_regis.addEventListener('click', () => {
           .then(r => {
             bd_regis=r;
             // On passe sur la page suivante
+            localStorage.setItem('pseudo', pseudo_regis.value);
             pseudo_regis.style.display = "none";
             mdp_regis.style.display = "none";
             mail_regis.style.display = "none";
@@ -78,12 +76,9 @@ bouton_regis.addEventListener('click', () => {
 });
 
 
-
-
-
-
-
-bouton_login.addEventListener('click', () => {
+// Bouton de connexion
+bouton_login.addEventListener('click', (a) => {
+  a.preventDefault();
   erreur_login.innerHTML = ""
   let pseudo_login = document.getElementById('pseudo_login');
   let mdp_login = document.getElementById('mdp_login');
@@ -97,6 +92,7 @@ bouton_login.addEventListener('click', () => {
     for (let i=0; i<bd_auth.length; i++){
       if(pseudo_login.value == bd_auth[i].nom && mdp_login.value == bd_auth[i].mdp){
         //L'authentification a fonctionné, on modifie l'affichage et on passe à la page de choix des parties
+        localStorage.setItem('pseudo', pseudo_login.value);
         pseudo_login.style.display = "none";
         mdp_login.style.display = "none";
         bouton_login.style.display = "none";
