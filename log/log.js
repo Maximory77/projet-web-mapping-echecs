@@ -47,6 +47,11 @@ bouton_regis.addEventListener('click', (a) => {
         erreur_regis.innerHTML = "<p>Veuillez choisir un mot de passe de 3 caractères ou plus</p>";
         break;
       }
+      else if(pseudo_regis.value.length<3){
+        // Un pseudo doit être de taille supérieure ou égale à 3 caractères
+        erreur_regis.innerHTML = "<p>Veuillez choisir un pseudo de 3 caractères ou plus</p>";
+        break;
+      }
       else {
         if (i == bd_regis.length-1 && mail_regis.value != bd_regis[i].mail && pseudo_regis.value != bd_regis[i].nom){
           // Si la base de donnée entière a été parcourue sans être interrompue par une des conditions ci-dessus
