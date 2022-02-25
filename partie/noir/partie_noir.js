@@ -29,6 +29,28 @@ var tour = 1;
 var trait = 1;
 var coup = 0;
 
+abandonner_boutton = document.getElementById('abandonner');
+abandonner_boutton.addEventListener('click',abandonner);
+
+function abandonner() {
+  //fetch permettant d'envoyer un abandon
+
+  fetch('../nul_abandon.json.php?partie=' + partie + '&id_joueur="' + id_joueur +
+        '"&cote=' + cote + "&abandon=" + 1)
+  .then(r => r.json())
+  .then(r => {
+    console.log(r);
+    if (r["requete"]=='ok'){
+      console.log("coucou, tu as abandonné");
+      defaite();
+
+    }else{
+      console.log("la demande a été refusé");
+    }
+
+  })
+}
+
 
 // FONCTIONS UTILES
 //permet de remettre les cases de la bonne couleur des cases surlignées
@@ -124,6 +146,10 @@ affichage_plateau(plateau);
 function joue_uncoupsbis(){
   if(trait==2){// c'est à nous de jouer
     console.log('a nous de jouer');
+    //on regarde si l'adversaire n'a pas abandonne
+    defaite();
+
+
     a_demander=recuperer_les_coups_possible(a_demander);
     $(`.piece`).mousedown(dragS); // rajoute l'evenement de drag en drop sur les pieces dont le deplacement est possible
     $(`.piece`).on('click',remise_couleur);// rajoute l'evenement de clic sur les pieces dont le deplacement est possible
@@ -149,7 +175,7 @@ function recuperer_les_coups_possible(a_demander2){
 }
 
 
-joue=setInterval(joue_uncoupsbis,3000); // fonction qui permet de jouer de jouer si on a le trait
+joue=setInterval(joue_uncoupsbis,1500); // fonction qui permet de jouer de jouer si on a le trait
 cr=setInterval(cr_1_j1,500); //fonction qui regarde toutes les 1 secondes a quel tour on est et qui a le trait
 
 function dragS(e){
@@ -251,12 +277,14 @@ function recup_coup_j1(){
         '"&cote=' + cote + "&tour=" + tour + "&trait=" + (trait-1))
   .then(r => r.json())
   .then(r => {
-    coups_possible=r["coups"]
+    coups_possible=r["coups"];
+    let coups_vue=r["coups"].concat(r["vues"]);
+
     console.log(r)
-    console.log(trait-1);
     // quand une piece apparait directement dans une case visible et qu'on peut la manger
     let il_joue=r["il_joue"];
     let nature=r["nature"];
+
     if (r["pion pris"]==0){
       plateau=maj_plateau_deplacement_piece_il_joue(plateau,il_joue, nature);
     }else{
@@ -264,10 +292,16 @@ function recup_coup_j1(){
     }
 
     // quand une piece apparait sur une case visible mais qu'on ne peut pas la manger (un piont devant un autre piont)
-    let vues=r["vues"];
-    if (!(typeof vues[0] == 'undefined')){// la vue existe
-      plateau=maj_plateau_deplacement_piece_il_joue_vue(plateau,vues);
-    }
+
+    // let vues=r["vues"];
+    // if (!(typeof vues[0] == 'undefined')){// la vue existe
+    //   plateau=maj_plateau_deplacement_piece_il_joue_vue(plateau,vues);
+    // }
+
+    //on met a joueur les vues possibles en fonction des coups possibles
+
+    plateau=maj_plateau_vues(plateau,coups_vue);
+
     affichage_plateau(plateau);
   })
 }
@@ -430,12 +464,15 @@ function maj_plateau_vues(plateau, vues){// met a jour le plateau en fonction de
 
     }else{// il y a une piece adverse presente sur la case
       let type_piece=vue[4];
-      if ((!(vue[4]=="pr"))&&(!(vue[4]=="gr"))){
+      if ((!(vue[4]=="pr"))&&(!(vue[4]=="gr"))&&(!(vue[4]=="promoD"))&&(!(vue[4]=="promoF"))&&(!(vue[4]=="promoC"))&&(!(vue[4]=="promoT"))){
         // on regarde quel est le type de piece qui est present
-        console.log("maj_plateau_vue");
         type_piece=nom_piece(vue[4],"blanc");
         // on ajoute donc la piece sur l'echiquier
         plateau_maj[coord]=type_piece;
+      }else{//il s'agit d'une case de promotion sans une piece adverse
+        if((vue[4]=="promoD")||(vue[4]=="promoF")||(vue[4]=="promoC")||(vue[4]=="promoT")){
+          plateau_maj[coord]="v";
+        }
       }
 
     }
