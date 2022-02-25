@@ -540,7 +540,7 @@ function pion($piece,$plateau,$cote) {
       }
     } else { // si elle n'est pas occupée on va simplement la rajouter dans les vues du pion
       if (($j_expl!=0) && ($j_expl!=9)) { // on vérifie que les coordonnées donnent une case de l'échiquier
-        $vues_par_pion[] = [$i_p,$j_p,$i_p+1,$j_expl];
+        $vues_par_pion[] = [$i_p,$j_p,$i_p+1*$sens,$j_expl];
       }
     }
   }
