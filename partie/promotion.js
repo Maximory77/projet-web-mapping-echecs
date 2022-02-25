@@ -1,4 +1,4 @@
-var reine = document.getElementById('Reine');
+var dame = document.getElementById('Dame');
 var fou = document.getElementById('Fou');
 var cavalier = document.getElementById('Cavalier');
 var tour = document.getElementById('Tour');
@@ -6,7 +6,7 @@ var tour = document.getElementById('Tour');
 var promo_select="";
 
 //Ajout des listener
-reine.addEventListener('click', fcsubmit);
+dame.addEventListener('click', fcsubmit);
 fou.addEventListener('click', fcsubmit);
 cavalier.addEventListener('click', fcsubmit);
 tour.addEventListener('click', fcsubmit);

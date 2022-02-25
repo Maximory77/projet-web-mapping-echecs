@@ -1,0 +1,125 @@
+# Communication et comportement des fichiers php
+
+## cr.json.php
+
+> Ce fichier renvoie le compte rendu de la partie pour le joueur en entrée :
+> C'est à dire le tour et le trait courant, ainsi que le côté
+> et l'historique des échanges je_joue - il_joue entre le joueur et l'arbitre
+
+### Les entrées
+
+- id_joueur : identifiant du joueur avec des double quotes ("id_joueur")
+- partie : identifiant de la partie
+
+### Les sorties
+
+> Comme le nom du fichier l'indique, les sorties sont sous forme de json
+
+1. **erreurs générales** :
+  - {"erreur" : "Erreur de connexion à la base de données"} => mauvaise connexion à la BDD, certainement à cause de la connexion internet
+  - {"erreur" : "Ce participant n'est pas sur cette partie"}
+  - {"erreur" : "Erreur de paramètres en entrée"}
+2. **CR** : json contenant les paramètres suivants
+  - {"tour":"k"} : avec k le tour
+  - {"trait":"t"} : avec t le trait (1 ou 2)
+  - {"cote":"c"} : avec c le côté (1 ou 2)
+  - {"histo":h} : avec h un json contenant :
+    - {histo : [Lc]} : avec La une liste de communications avec l'arbitre sous format json
+
+## maj.json.php
+
+> Ce fichier renvoie différents outputs selon le type d'inputs, ceux-ci sont répertoriés ci-dessous
+
+### Les entrées
+
+- id_joueur : identifiant du joueur avec des double quotes ("id_joueur")
+- partie : identifiant de la partie
+- cote : il s'agit du côté du joueur (1 pour les blancs, 2 pour les noirs)
+- tour : tour en cours pour le joueur effectuant la demande
+- trait : côté de l'échiquier devant jouer
+- coup (par défaut null) : coup joué par le joueur si celui-ci veut joueur
+- test_unitaire : si égal à true, on est dans les tests unitaires et la BDD ne sera ainsi pas modifiée
+
+### Les sorties
+
+> Comme le nom du fichier l'indique, les sorties sont sous forme de json
+> Nous ne prenons pas en compte les sorties text des tests unitaires
+
+1. **erreurs générales** :
+  - {"erreur" : "Erreur de connexion à la base de données"} => mauvaise connexion à la BDD, certainement à cause de la connexion internet
+  - {"erreur" : "aucune des situations ne correspond."} => problème dans les paramètres envoyés au php
+  - {"erreur" : "Le joueur ne correspond pas au cote en entree."}
+2. **fin ou nul** :
+  - {"fin" : "x"} => la partie est finie, x désigne le côté du joueur gagnant
+  - {"nul" : "demande"} => l'adversaire demande le nul
+3. **attente du coup de l'adversaire** :
+  - {"ras" : 1} => en attente du coup de l'adversaire
+4. **réception d'un coup joué par l'adversaire** :
+  - {"coups" : Lc} => coups possibles avec Lc une liste de coups sous la forme [coup1,coup2...], un coup a la structure suivante :
+  	- coup = [i_depart,j_depart,i_arrivee,j_arrivee,option]
+  	- les 4 premières coordonnées sont obligatoires, s'il n'y en a pas d'autre c'est que le coup est 'simple'
+  	- le 5e paramètre est optionnel : il peut s'agir d'une chaîne de caractères parmis les suivantes
+  		- "N" => le coup permet de prendre une pièce dont N représente la nature (P,T,F,R,D,C)
+  		- "gr" => grand roque
+  		- "pr" => petit roque
+  		- "pp" => prise en passant (implique une prise de pion)
+  		- "promoX" => promotion d'un pion en une pièce X (F,C,D,T) : parfois placée en 6e paramètre car on prend également un pion
+  - {"vues" : Lv} => pièces adverses vues sans coups avec Lv une liste de vues sous la forme [vue1,vue2...], une vue a la structure suivante :
+  	- vue = [i_piece_pouvant_voir,j_piece_pouvant_voir,i_piece_vue,j_piece_vue,nature_piece_vue]
+  - {"fin" : "x"} => la partie est finie, x désigne le côté du joueur gagnant
+  - {"il_joue" : [0,0,0,0]}
+  - {"pion pris" : x} => x = 0 ou {"i" : i, "j" : j, "pion" : "N pris","i_dep":i_dep,"j_dep":j_dep,"pion adv":"N adv"} avec i et j les coordonnées du pion pris, i_dep et j_dep les coordonnées du pion ayant pris, "N pris" la nature de la pièce prise et "N adv" celle de la pièce l'ayant pris (P,T,F,R,D,C)
+  - {"nature" : "N"} => si l'adversaire a joué une pièce qu'on peut voir, N peut être P, T, F, R, D ou C
+5. **le joueur joue son coup** :
+  - {"je_joue" : coup} => coup joué par le joueur ayant lancé la requête : sous la forme d'un coup dans la partie 4
+  - {"vues" : Lv} => toutes les cases vues par le joueur après son coup, sous la forme d'un coup dans la partie 4
+  - {"erreur" : "Coup invalide"} => le joueur a mis son roi en échec
+
+## nul_abandon.json.php
+
+> Ce fichier permet de gérer les demandes/acceptations de nul et les abandons
+
+### Les entrées
+
+- id_joueur : identifiant du joueur avec des double quotes ("id_joueur")
+- partie : identifiant de la partie
+- cote : côté du joueur (1 ou 2)
+- nul (par défaut 0) : si égal à 1 on veut faire une demande ou une acceptation de nul
+- abandon (par défaut 0) : si égal à 1 on abandonne la partie
+- test_unitaire : si égal à true, on est dans les tests unitaires et la BDD ne sera ainsi pas modifiée
+
+
+### Les sorties
+
+> Comme le nom du fichier l'indique, les sorties sont sous forme de json
+
+1. **erreurs générales** :
+  - {"erreur" : "Erreur de connexion à la base de données"} => mauvaise connexion à la BDD, certainement à cause de la connexion internet
+  - {"erreur" : "Erreur de requete de base de donnees"}
+  - {"erreur" : "aucune des situations ne correspond"}
+  - {"erreur" : "aucune des situations ne correspond"}
+2. **CR** : json contenant les paramètres suivants
+  - {"requete" : "ok"} => il s'agit du seul retour pour indiquer au joueur que sa requête a bien été prise en compte
+
+## nouvelle_parte.json.php
+
+> Ce fichier permet de créer un nouvelle partie
+> Lorsque ce fichier est appelé :
+>  - on envoie un nom de joueur tout seul : on créée nouvelle partie avec le joueur en coté 2
+>  - on envoie nom de joueur et une partie : met le joueur dans la partie
+
+
+### Les entrées
+
+- id_joueur : identifiant du joueur avec des double quotes ("id_joueur")
+- partie : identifiant de la partie
+
+### Les sorties
+
+> Comme le nom du fichier l'indique, les sorties sont sous forme de json
+
+1. **erreurs générales** :
+  - {"erreur" : "Erreur de connexion à la base de données"} => mauvaise connexion à la BDD, certainement à cause de la connexion internet
+  - {"erreur" : "Erreur de requete de base de donnees"}
+2. **CR** : json contenant les paramètres suivants
+  - {"nouvelle_parte" : "ok"} => il s'agit du seul retour pour indiquer au joueur que sa requête a bien été prise en compte
