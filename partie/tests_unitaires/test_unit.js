@@ -237,6 +237,15 @@ button_ok.addEventListener("click", function() {
     var partie = 0;
     display_inscription_partie(partie,id_joueur);
   }
+  if (value == 999) {
+    explications.innerText = "Débug spécifique selon le besoin";
+    var partie = 999;
+    var id_joueur = "j2";
+    var cote = 1;
+    var tour = 4;
+    var trait = 2;
+    display_maj(partie,id_joueur,cote,tour,trait,coup);
+  }
   afficher_parametres(partie,id_joueur,cote,tour,trait,coup,nul,abandon);
 })
 

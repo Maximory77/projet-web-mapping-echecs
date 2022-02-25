@@ -345,7 +345,7 @@ function il_joue($link,$table,$cote) {
     if ($result_histos = mysqli_query($link,$requete_MAJ_histo)) {
       echo json_encode($retour); // s'il n'y a pas d'erreur on peut renvoyer le json
     } else {
-      echo json_encode(array("erreur" => "Erreur de requete de base de donnees 4."));
+      echo json_encode(array("erreur" => "Erreur de requete de base de donnees."));
     }
   } else { // si on teste le programme, il est inutile de mettre à jour la BDD
     echo "retour :\n";
@@ -368,8 +368,7 @@ function verif_coords_depart_vues($coords_coup_adv,$retour,$plateau) {
     $vues_par_joueur = $retour[$cle];
     if (isset($vues_par_joueur)) { // on récupère une par une les listes de cases vues par le joueur actuellement
       foreach($vues_par_joueur as $case_exploree) { // on parcourt ces cases
-        if ((($coords_coup_adv[0]==$case_exploree[0]) && ($coords_coup_adv[1]==$case_exploree[1]))
-        || (($cle=="coups") && ($coords_coup_adv[0]==$case_exploree[2]) && ($coords_coup_adv[1]==$case_exploree[3]))) {
+        if (($coords_coup_adv[0]==$case_exploree[2]) && ($coords_coup_adv[1]==$case_exploree[3])) {
           // si on retrouve les deux mêmes coords, c'est que cette case est vue
           // on peut ajouter les coordonnées au retour
           $retour["il_joue"][0] = $coords_coup_adv[0];
@@ -538,6 +537,10 @@ function pion($piece,$plateau,$cote) {
         } else { // si on n'a pas atteint la dernière ligne
           $coups_par_pion[] = [$i_p,$j_p,$i_p+1*$sens,$j_expl,$occupee[0]];
         }
+      }
+    } else { // si elle n'est pas occupée on va simplement la rajouter dans les vues du pion
+      if (($j_expl!=0) && ($j_expl!=9)) { // on vérifie que les coordonnées donnent une case de l'échiquier
+        $vues_par_pion[] = [$i_p,$j_p,$i_p+1,$j_expl];
       }
     }
   }
