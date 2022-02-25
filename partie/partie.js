@@ -93,13 +93,13 @@ for (let i=0; i<initialisation_pos.length;i++){
   var type_ini = initialisation_type[i];
   $(`#${coords}`).html('<img class="piece" draggable="true" src="./images/'+type_ini+'.png" alt="'+type_ini+'">');
 }
- var tab_promotion=["case44","case18", "case28", "case38", "case48", "case58", "case68", "case78","case88"];
+ var tab_promotion=["case11", "case21", "case31", "case41", "case51", "case61", "case71","case81"];
 
 // deplacement des pieces
 
 // recuperation des coups possibles :
-coups_possible=[[2,1,1,3],[2,1,3,3],[7,1,6,3],[7,1,8,3],[1,2,1,3],[2,2,2,3],[3,2,3,3],[4,2,4,3],[5,2,5,3],[6,2,6,3],[7,2,7,3],[8,2,8,3],[1,2,1,4],[2,2,2,4],[3,2,3,4],[4,2,4,4],[5,2,5,4],[6,2,6,4],[7,2,7,4],[8,2,8,4]]
-
+//coups_possible=[[2,1,1,3],[2,1,3,3],[7,1,6,3],[7,1,8,3],[1,2,1,3],[2,2,2,3],[3,2,3,3],[4,2,4,3],[5,2,5,3],[6,2,6,3],[7,2,7,3],[8,2,8,3],[1,2,1,4],[2,2,2,4],[3,2,3,4],[4,2,4,4],[5,2,5,4],[6,2,6,4],[7,2,7,4],[8,2,8,4]]
+premier_coup_j2();
 
 
 //quand on commence à deplacer ou clic une piece on doit : mettre en surbrillance uniquement les cases disponibles
@@ -117,7 +117,7 @@ function dragS(e){
 
   //recuperation des coups popssible en fonction de la piece prise
   for (let i=0;i<coups_possible.length;i++){
-    if (coups_possible[i][0]==coord_piece_select[4]&&coups_possible[i][1]==coord_piece_select[5]){
+    if (coups_possible[i][1]==coord_piece_select[4]&&coups_possible[i][0]==coord_piece_select[5]){
       surligne.push(coups_possible[i]);
     }
   }
@@ -125,7 +125,7 @@ function dragS(e){
   // mettre ces cases en subrillance et en droppable
   for(let i=0;i<surligne.length;i++){
     //transformation de la coordonnees en identifiant de case
-    let coord="case"+surligne[i][2]+surligne[i][3];
+    let coord="case"+surligne[i][3]+surligne[i][2];
 
     //mettre les futures cases en surbrillance et en droppable
     $(`#${coord}`).html('<div class="case_noire case" id="'+coord+'" style=" background-color:#bacd22" ondrop="drop_handler(event)" ondragover="dragover_handler(event)"></div>');
@@ -181,5 +181,5 @@ function drop_handler(ev) {
 
 
     //on lance la requete pour le php
-
 }
+
