@@ -1,4 +1,3 @@
-//mettre des conditions pour la promotion dans je joue. et surtotu deplacement de la piece . (mettre a jour notre plateau). de meme pour les vues quand on decouvre une promotion
 
 //initialisation des Variables
 var plateau =  document.getElementById('plateau');
@@ -41,6 +40,7 @@ recharger_boutton.addEventListener('click',function() {
 })
 //Fin ajout Baptiste
 
+//ABANDON
 abandonner_boutton = document.getElementById('abandonner');
 abandonner_boutton.addEventListener('click',abandonner);
 
@@ -105,7 +105,11 @@ function verification() {
   if(promotion.parentNode != container) {
     container.appendChild(promo);
     clearInterval(verif);
+    if(rep_iframe.toUpperCase()[0]=="R"){// probleme de communication R designe la Reine et non la dame
+      rep_iframe="D";
+    }
     rep_promo='promo'+rep_iframe.toUpperCase()[0];
+    console.log(rep_promo);
 
     //type_promo=nom_piece(rep_promo,"blanc");
     //console.log(type_promo);
@@ -189,7 +193,7 @@ function recuperer_les_coups_possible(a_demander2){
 }
 
 
-joue=setInterval(joue_uncoupsbis,3000);// fonction qui permet de jouer si on a le trait, elle permet de savoir quels sont les coups possibles et de declancher les evenements d'ecoute sur les cases
+joue=setInterval(joue_uncoupsbis,1500);// fonction qui permet de jouer si on a le trait, elle permet de savoir quels sont les coups possibles et de declancher les evenements d'ecoute sur les cases
 cr=setInterval(cr_1_j2,500);//fonction qui regarde toutes les deux seconde à quel tour on est et qui a le trait
 
 function dragS(e){// fonction d'evenement : elle permet de mettre en surbrillance les cases possible quand on commence en drag and drop
@@ -293,17 +297,14 @@ function recup_coup_j2(){// fetch permettant de recuperer les coups possibles un
   .then(r => r.json())
   .then(r => {
     coups_possible=r["coups"];
-    // console.log("parametre en entree de recup_coup_j2")
-    // console.log(partie);
-    // console.log(id_joueur);
-    // console.log(cote);
-    // console.log(tour);
-    // console.log(trait+1);
-    // console.log("sortie de recup_coup_j2")
+
+    let coups_vue=r["coups"].concat(r["vues"]);
+
     console.log(r);
     // quand une piece apparait directement dans une case visible et qu'on peut la manger
     let il_joue=r["il_joue"];
     let nature=r["nature"];
+
     if (r["pion pris"]==0){
       plateau=maj_plateau_deplacement_piece_il_joue(plateau,il_joue, nature);
     }else{
@@ -311,10 +312,14 @@ function recup_coup_j2(){// fetch permettant de recuperer les coups possibles un
     }
 
     // quand une piece apparait sur une case visible mais qu'on ne peut pas la manger (un piont devant un autre piont)
-    let vues=r["vues"];
-    if (!(typeof vues[0] == 'undefined')){// la vue existe
-      plateau=maj_plateau_deplacement_piece_il_joue_vue(plateau,vues);
-    }
+    // let vues=r["vues"];
+    // if (!(typeof vues[0] == 'undefined')){// la vue existe
+    //   console.log("je met a jour les vues");
+    //   plateau=maj_plateau_deplacement_piece_il_joue_vue(plateau,vues);
+    // }
+    //on met a joueur les vues possibles en fonction des coups possibles
+
+    plateau=maj_plateau_vues(plateau,coups_vue);
 
     //on affiche le plateau avec les nouveaux changements
     affichage_plateau(plateau);
@@ -484,11 +489,15 @@ function maj_plateau_vues(plateau, vues){// met a jour le plateau en fonction de
 
     }else{// il y a une piece adverse presente sur la case
       let type_piece=vue[4];
-      if ((!(vue[4]=="pr"))&&(!(vue[4]=="gr"))){
+      if ((!(vue[4]=="pr"))&&(!(vue[4]=="gr"))&&(!(vue[4]=="promoD"))&&(!(vue[4]=="promoF"))&&(!(vue[4]=="promoC"))&&(!(vue[4]=="promoT"))){
         // on regarde quel est le type de piece qui est present
         type_piece=nom_piece(vue[4],"noir");
         // on ajoute donc la piece sur l'echiquier
         plateau_maj[coord]=type_piece;
+      }else{//il s'agit d'une case de promotion sans une piece adverse
+        if((vue[4]=="promoD")||(vue[4]=="promoF")||(vue[4]=="promoC")||(vue[4]=="promoT")){
+          plateau_maj[coord]="v";
+        }
       }
 
     }
