@@ -1,8 +1,5 @@
 // Récupère les éléments HTML nécessaires
 let bouton_regis = document.getElementById('bouton_regis');
-
-// let pseudo_login = document.getElementById('pseudo_login');
-// let mdp_login = document.getElementById('mdp_login');
 let bouton_login = document.getElementById('bouton_login');
 
 let erreur_login = document.getElementById('erreur_login');
@@ -17,7 +14,6 @@ var bd_regis;
 // Vide le local storage si il en existait un, permet de "déconnecter" une personne
 localStorage.removeItem("pseudo");
 localStorage.removeItem("id_partie");
-
 
 $('.message a').click(function(){
    $('form').animate({height: "toggle", opacity: "toggle"}, "slow");

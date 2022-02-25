@@ -6,7 +6,6 @@ var emplacement_pseudo = document.getElementById('pseudo');
 var pseudo = localStorage.getItem('pseudo');
 var partie = localStorage.getItem('id_partie');
 
-
 emplacement_pseudo.innerHTML = '<p><strong>'+pseudo+'</strong></p>';
 
 
