@@ -13,6 +13,7 @@ var bd_regis;
 
 // Vide le local storage si il en existait un, permet de "déconnecter" une personne
 localStorage.removeItem("pseudo");
+localStorage.removeItem("id_partie");
 
 $('.message a').click(function(){
    $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
