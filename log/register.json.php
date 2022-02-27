@@ -6,6 +6,7 @@ $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kev
 if (!$link) {
   die('Erreur de connexion');
 } else {
+  // echo 'Succès... ';
 }
 
 

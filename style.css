@@ -203,6 +203,10 @@ Choix partie
   text-align: center;
 }
 
+.choixPartie button {
+  background: #525252;
+}
+
 .choixPartie .wrapper-choix {
   margin: auto;
   padding: 3em;
@@ -228,6 +232,22 @@ Choix partie
   object-fit: contain;
 }
 
+.wrapper-choix p {
+  font-size: 18px;
+}
+
+#liste_partie {
+  grid-column: 1 / span 2;
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid white;
+  background-color: grey;
+}
+
 #nouvellePartieAmis {
   grid-column: 1;
   grid-row: 1;
@@ -247,6 +267,10 @@ Regarder
   text-align: center;
 }
 
+.choixObservation button {
+  background: #525252;
+}
+
 .choixObservation a {
   text-decoration: none;
   color:#f2f2f2;
@@ -259,6 +283,10 @@ Regarder
   flex-direction: column;
   max-width: 40em;
   max-height: 40em;
+}
+
+.choixObservation .wrapper-choix p {
+  font-size: 18px;
 }
 
 /*----------------------------------------------------------------------------
