@@ -13,7 +13,7 @@ if (!$link) {
 mysqli_set_charset($link, "utf8");
 
 
-$requete = "SELECT * FROM partie";
+$requete = "SELECT * FROM parties";
 $tab=[];
 if($result=mysqli_query($link,$requete)){
   while($ligne=mysqli_fetch_assoc($result)){

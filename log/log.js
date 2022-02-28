@@ -11,10 +11,6 @@ let pagesuivante_regis = document.getElementById('pagesuivante_regis');
 var bd_auth;
 var bd_regis;
 
-// Vide le local storage si il en existait un, permet de "déconnecter" une personne
-localStorage.removeItem("pseudo");
-localStorage.removeItem("id_partie");
-
 $('.message a').click(function(){
    $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
 });
@@ -45,6 +41,11 @@ bouton_regis.addEventListener('click', (a) => {
       else if(mdp_regis.value.length<3){
         // Un mot de passe doit être de taille supérieure ou égale à 3 caractères
         erreur_regis.innerHTML = "<p>Veuillez choisir un mot de passe de 3 caractères ou plus</p>";
+        break;
+      }
+      else if(pseudo_regis.value.length<3){
+        // Un pseudo doit être de taille supérieure ou égale à 3 caractères
+        erreur_regis.innerHTML = "<p>Veuillez choisir un pseudo de 3 caractères ou plus</p>";
         break;
       }
       else {

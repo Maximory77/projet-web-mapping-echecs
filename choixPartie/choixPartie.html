@@ -7,7 +7,7 @@
   </head>
   <body>
     <div class="menu">
-      <a id="logo" href="../index.html">I</a>
+      <a id="logo" href="../index.html"></a>
       <a class="active" href="/choixPartie/choixPartie.html">Jouer</a>
       <a href="/choixPartie/choixObservation.html">Regarder</a>
       <a href="../outils/classement.html">Classement</a>
@@ -15,7 +15,8 @@
       <div class="id">
         <div id="pseudo">
         </div>
-        <a class="connection" href="../index.html">Déconnexion</a>
+        <div id="connexion">
+        </div>
       </div>
 
       <a href="../partie/partie.html" class="partie_temporaire">Partie en cours</a>
@@ -29,21 +30,17 @@
     <div id="container" class="choixPartie">
       <div id="nouvellePartieAmis" class="wrapper-choix">
         <button><img src = '../images/adversaire_amis.png'> <p>Nouvelle partie</p></button>
-        <!-- <a href="../partie/partie.html">
-            <img src = '../images/adversaire_amis.png'>
-          <p>Nouvelle partie</p>
-        </a> -->
       </div>
       <div id="chargerPartie" class="wrapper-choix">
         <button><img src = '../images/charger_partie.png'> <p>Charger une partie en cours</p></button>
-        <!-- <a href="../partie/partie.html">
-            <img src = '../images/charger_partie.png'>
-          <p>Charger une partie en cours</p>
-        </a> -->
       </div>
+
       <div id="liste_partie">
       </div>
+
     </div>
     <script src="../choixPartie/choixPartie.js"></script>
+    <script src="../outils/outils.js"></script>
+
   </body>
 </html>
