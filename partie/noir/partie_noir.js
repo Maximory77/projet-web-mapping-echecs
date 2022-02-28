@@ -5,6 +5,8 @@ var container =  document.getElementById('container');
 var verif;
 var promotion = document.createElement('iframe');
 promotion.id="promotion";
+var emplacement_pseudo = document.getElementById('pseudo');
+var pseudo = localStorage.getItem('pseudo')
 
 //initialisation des variables des pieces déplacés
 var surligne=[];
@@ -18,7 +20,6 @@ var tab_promotion=["case11", "case12", "case13", "case14", "case15", "case16", "
 var coups_possible="";
 var a_demander=0;
 var list_vues=[];
-
 var plateau=initialisation_plateau();// la plateau vu par le joeur avec les pieces actuelles
 
 //initialisation des attribut pour les envoies au serveur
@@ -28,6 +29,33 @@ var cote = 2;
 var tour = 1;
 var trait = 1;
 var coup = 0;
+
+//Pseudo du joueur retenu dans la page
+emplacement_pseudo = pseudo;
+
+//GESTION DES MESSAGES
+
+var message = document.getElementById('felicitations');
+
+abandonner_boutton = document.getElementById('abandonner');
+abandonner_boutton.addEventListener('click',abandonner);
+
+function abandonner() {//fetch permettant d'envoyer un abandon
+
+  fetch('../nul_abandon.json.php?partie=' + partie + '&id_joueur="' + id_joueur +
+        '"&cote=' + cote + "&abandon=" + 1)
+  .then(r => r.json())
+  .then(r => {
+    console.log(r);
+    if (r["requete"]=='ok'){
+      defaite();
+    }else{
+      console.log("la demande a été refusé");
+    }
+  })
+}
+
+
 
 
 // FONCTIONS UTILES
@@ -43,7 +71,6 @@ function remise_couleur(e){//fonction quand on clique sur une case
       }
   }
 }
-
 function enleve_surbrillance (tab_surbrillance){// même fonction mais en argument un tableau des dalles surlignées
   for (let i=0; i<tab_surbrillance.length; i++){
     let coord="case"+tab_surbrillance[i][2]+tab_surbrillance[i][3];
@@ -64,19 +91,16 @@ function fctpromotion() {
   // On vérifie si lla promotion a été terminé (choisi par l'utilisateur) afin de rafficher la carte
   verif = setInterval(verification, 200);
 }
-
-
 // Fonction de vérification de la fin de la promotion de rafficher la carte en la mettant à jour
 function verification() {
+  message.innerHTML ="Pomotion de pion, veuillez choisir la promotion en bas de l'écran.";
   if(promotion.parentNode != container) {
     container.appendChild(promo);
     clearInterval(verif);
+    if(rep_iframe.toUpperCase()[0]=="R"){// probleme de communication R designe la Reine et non la dame
+      rep_iframe="D";
+    }
     rep_promo='promo'+rep_iframe.toUpperCase()[0];
-
-
-
-    //creation de la requete
-    //creation de la structure du coup joue
     var coup_joue=coord_piece_select[4]+","+coord_piece_select[5]+","+case_arrive[4]+","+case_arrive[5];
     //recherhce de l'index
     var index=0;
@@ -108,22 +132,22 @@ function verification() {
 
   }
   }
-
-
 //fonction qui permet de recuperer la valeur d'une iframe fille
 function afficheParent(valeur){
   rep_iframe=valeur;
 }
 
 affichage_plateau(plateau);
+joue=setInterval(joue_uncoupsbis,1500); // fonction qui permet de jouer de jouer si on a le trait
+cr=setInterval(cr_1_j1,500); //fonction qui regarde toutes les 1 secondes a quel tour on est et qui a le trait
 
 
-// deplacement des pieces
+
 
 
 function joue_uncoupsbis(){
   if(trait==2){// c'est à nous de jouer
-    console.log('a nous de jouer');
+    message.innerHTML ='A nous de jouer';
     a_demander=recuperer_les_coups_possible(a_demander);
     $(`.piece`).mousedown(dragS); // rajoute l'evenement de drag en drop sur les pieces dont le deplacement est possible
     $(`.piece`).on('click',remise_couleur);// rajoute l'evenement de clic sur les pieces dont le deplacement est possible
@@ -132,16 +156,14 @@ function joue_uncoupsbis(){
     // on enleve les evenement d'ecoute,; on ne peut plus deplacer les pieces
     $(`.piece`).off('click',remise_couleur);
     $(`.piece`).off('mousedown',dragS);
-    console.log("en attente de l'autre joeur");
+    message.innerHTML = "En attente de l'adversaire";
     a_demander=0;
     // on doit regarder si on a perdu
     defaite();
   }
 }
-
 function recuperer_les_coups_possible(a_demander2){
   if(a_demander2==0){
-    console.log("on met a jour les coups possible");
     recup_coup_j1(); //mettre a jour les informations des coups possibles
   }
   a_demander2=1
@@ -149,8 +171,6 @@ function recuperer_les_coups_possible(a_demander2){
 }
 
 
-joue=setInterval(joue_uncoupsbis,3000); // fonction qui permet de jouer de jouer si on a le trait
-cr=setInterval(cr_1_j1,500); //fonction qui regarde toutes les 1 secondes a quel tour on est et qui a le trait
 
 function dragS(e){
 
@@ -178,12 +198,10 @@ function dragS(e){
     $(`#${coord}`).html('<div class="case_noire case" id="'+coord+'" style=" background-color:#bacd22" ondrop="drop_handler(event)" ondragover="dragover_handler(event)"></div>');
   }
 }
-
 function dragover_handler(ev) {
  ev.preventDefault();
  ev.dataTransfer.dropEffect = "move";
 }
-
 function drop_handler(ev) {
   ev.preventDefault();
   case_arrive =(ev.target["id"]);
@@ -223,19 +241,15 @@ function drop_handler(ev) {
 
 
 // fonction utiles pour les coups des joueurs
-
-
 function joue_j1(){
   // j1 joue un coup
   fetch('../maj.json.php?partie=' + partie + '&id_joueur="' + id_joueur +
         '"&cote=' + cote + "&tour=" + tour + "&trait=" + trait + "&coup=" + coup)
   .then(r => r.json())
   .then(r => {
-    console.log(r);
     if((typeof r['erreur'] == 'undefined')){//on doit verifier que le coup est bien accepté par l'arbitre
       //on met le deplacement de la piece a jour sur le plateau
       plateau=maj_plateau_deplacement_piecebis(plateau,r["je_joue"]);
-
       //on regarde si on n'a pas mis le roi en echec
       if (!(typeof r['fin'] == 'undefined')){// la partie est fini il y a un gagnant
         victoire(r['fin']);
@@ -251,9 +265,9 @@ function recup_coup_j1(){
         '"&cote=' + cote + "&tour=" + tour + "&trait=" + (trait-1))
   .then(r => r.json())
   .then(r => {
-    coups_possible=r["coups"]
-    console.log(r)
-    console.log(trait-1);
+    coups_possible=r["coups"];
+    let coups_vue=r["coups"].concat(r["vues"]);
+
     // quand une piece apparait directement dans une case visible et qu'on peut la manger
     let il_joue=r["il_joue"];
     let nature=r["nature"];
@@ -263,11 +277,10 @@ function recup_coup_j1(){
       plateau=maj_plateau_piece_mangee(plateau,r["pion pris"],nature);
     }
 
-    // quand une piece apparait sur une case visible mais qu'on ne peut pas la manger (un piont devant un autre piont)
-    let vues=r["vues"];
-    if (!(typeof vues[0] == 'undefined')){// la vue existe
-      plateau=maj_plateau_deplacement_piece_il_joue_vue(plateau,vues);
-    }
+    //on met a joueur les vues possibles en fonction des coups possibles
+
+    plateau=maj_plateau_vues(plateau,coups_vue);
+
     affichage_plateau(plateau);
   })
 }
@@ -288,7 +301,6 @@ function defaite(){// fetch permettant de savoir si on a perdu
       victoire(r['fin']);
     }
   })
-
 }
 
 
@@ -352,34 +364,6 @@ function case_brouillard (case_b){// met une case dans le brouillard : prend en 
 }
 
 
-function nom_piece(string,couleur){  //renvoie le type de la piece en fonction de l'indication "P", "C" , "T" ...
-
-  let type_piece="";
-  if (string=='P'){//il s'agit d'un pion
-    type_piece="piont";
-  }
-  if (string=='T'){// il s'agit d'une tour
-    type_piece= "tour";
-  }
-  if (string=='C'){// il s'agit d'un cavalier
-    type_piece="cavalier";
-  }
-  if (string=='F'){// il s'agit d'un fou
-    type_piece="fou";
-  }
-  if (string=='D'){// il s'agit de la dame
-    type_piece="reine";
-  }
-  if (string=='R'){// il s'agit du roi
-    type_piece="roi";
-  }
-
-  type_piece=type_piece+"_"+couleur;
-  console.log(type_piece);
-  return type_piece;
-}
-
-
 //PLATEAU
 function initialisation_plateau(){
   let plat=[];
@@ -430,14 +414,16 @@ function maj_plateau_vues(plateau, vues){// met a jour le plateau en fonction de
 
     }else{// il y a une piece adverse presente sur la case
       let type_piece=vue[4];
-      if ((!(vue[4]=="pr"))&&(!(vue[4]=="gr"))){
+      if ((!(vue[4]=="pr"))&&(!(vue[4]=="gr"))&&(!(vue[4]=="promoD"))&&(!(vue[4]=="promoF"))&&(!(vue[4]=="promoC"))&&(!(vue[4]=="promoT"))){
         // on regarde quel est le type de piece qui est present
-        console.log("maj_plateau_vue");
         type_piece=nom_piece(vue[4],"blanc");
         // on ajoute donc la piece sur l'echiquier
         plateau_maj[coord]=type_piece;
+      }else{//il s'agit d'une case de promotion sans une piece adverse
+        if((vue[4]=="promoD")||(vue[4]=="promoF")||(vue[4]=="promoC")||(vue[4]=="promoT")){
+          plateau_maj[coord]="v";
+        }
       }
-
     }
   }
   return plateau_maj;
@@ -482,14 +468,6 @@ function affichage_plateau(plateau_afficher){// permet d'afficher le plateau ave
   }
 }
 
-function maj_plateau_deplacement_piece(plateau,coup_real,type){
-  // met a jour le plateau une fois qu'on a effectuer un coup
-  let coord_dep=8*(8-parseInt(coup_real[0]))-1+parseInt(coup_real[2]);//coordonnée de la case dans le plateau car l'origine des reperes est differents
-  let coord_arr=8*(8-parseInt(coup_real[4]))-1+parseInt(coup_real[6]);//coordonnée de la case dans le plateau car l'origine des reperes est differents
-  plateau[coord_dep]="b";
-  plateau[coord_arr]=type;
-  return plateau;
-}
 function maj_plateau_deplacement_piecebis(plateau,je_joue){// deplacement de la piece quand celle si est validée
   let coord_dep=8*(8-parseInt(je_joue[0]))-1+parseInt(je_joue[1]);//coordonnée de la case dans le plateau car l'origine des reperes est differents
   let coord_arr=8*(8-parseInt(je_joue[2]))-1+parseInt(je_joue[3]);//coordonnée de la case dans le plateau car l'origine des reperes est differents
@@ -519,25 +497,17 @@ function maj_plateau_deplacement_piecebis(plateau,je_joue){// deplacement de la 
       plateau[4]="v";
     }
     //il s'agit d'une promotion
-    console.log("je suis dans un coups speciale et la valeur de bol_promo est");
-    console.log(bol_promo);
     if(bol_promo==1){
-      console.log("je rentre dans promo de deplacement");
       bol_promo=0;
       if (je_joue.length==5){// il s'agit d'une promo sans prendre de piece adverse
-        console.log("je rentre dans promo sans prise");
         type=nom_piece(je_joue[4][5],"noir");
-
       }else{// il s'agit d'une promo avec une prise de piece adverse
-        console.log("je rentre dans promo avec prise");
         //on met a jour le cimetiere
         cimetiere(je_joue[4],"blanc");
         //on change le type de piece
         type=nom_piece(je_joue[5][5],"noir");
       }
     }
-
-
   }
 
   // on met a jour le plateau
@@ -551,7 +521,6 @@ function maj_plateau_deplacement_piece_il_joue(plateau, il_joue, nature){
 
   if (il_joue[0]==0 &&(!(il_joue[2]==0))){// alors la piece est apparu
     let coord_arr=8*(8-parseInt(il_joue[2]))-1+parseInt(il_joue[3]);
-    console.log("maj_plateau_deplacement_piece_il_joue1");
     let type=nom_piece(nature, "blanc");
     plateau[coord_arr]=type;
   }
@@ -564,7 +533,6 @@ function maj_plateau_deplacement_piece_il_joue(plateau, il_joue, nature){
   if ((!(il_joue[0]==0))&&(!(il_joue[2]==0))){// alors la piece adversaire visible s'est deplacee et est toujours visible
     let coord_dep=8*(8-parseInt(il_joue[0]))-1+parseInt(il_joue[1]);
     let coord_arr=8*(8-parseInt(il_joue[2]))-1+parseInt(il_joue[3]);
-    console.log("maj_plateau_deplacement_piece_il_joue2");
     let type=nom_piece(nature,"blanc");
     plateau[coord_dep]="b";
     plateau[coord_arr]=type;
@@ -574,7 +542,6 @@ function maj_plateau_deplacement_piece_il_joue(plateau, il_joue, nature){
 }
 
 function maj_plateau_deplacement_piece_il_joue_vue(plateau,vues){
-
 
   for (let i=0;i<vues.length;i++){// on met a jour les vues disponibles
     var vue=vues[i];
@@ -593,13 +560,11 @@ function maj_plateau_deplacement_piece_il_joue_vue(plateau,vues){
     }
   }
   return plateau;
-
 }
 
 function maj_plateau_piece_mangee(plateau,il_joue,nature){
   let piont_ad_i=il_joue["i_dep"];
   let piont_ad_j=il_joue["j_dep"];
-  console.log("maj_plateau_piece_mangee");
   let piont_ad_type=nom_piece(nature,"blanc");
   let ligne=il_joue["i"];
   let col=il_joue["j"];
@@ -625,9 +590,34 @@ function victoire(cote){//creer la fin de partie en cas de victoire
   clearInterval(cr);
   //affichage du gagnant
   if(cote==1){
-    console.log("Ce sont les blancs qui ont gagné!!");
+    message.innerHTML ="Ce sont les blancs qui ont gagné!!";
   }else{
-    console.log("Ce sont les noirs qui ont gagné!!");
+    message.innerHTML ="Ce sont les noirs qui ont gagné!!";
   }
 
+}
+function nom_piece(string,couleur){  //renvoie le type de la piece en fonction de l'indication "P", "C" , "T" ...
+
+  let type_piece="";
+  if (string=='P'){//il s'agit d'un pion
+    type_piece="piont";
+  }
+  if (string=='T'){// il s'agit d'une tour
+    type_piece= "tour";
+  }
+  if (string=='C'){// il s'agit d'un cavalier
+    type_piece="cavalier";
+  }
+  if (string=='F'){// il s'agit d'un fou
+    type_piece="fou";
+  }
+  if (string=='D'){// il s'agit de la dame
+    type_piece="reine";
+  }
+  if (string=='R'){// il s'agit du roi
+    type_piece="roi";
+  }
+
+  type_piece=type_piece+"_"+couleur;
+  return type_piece;
 }

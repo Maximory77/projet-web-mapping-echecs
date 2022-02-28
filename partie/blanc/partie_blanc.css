@@ -66,6 +66,14 @@ body {
   height: 3em;
 }
 
+#felicitations {
+  width: 100%;
+  font-size: 2em;
+  font-weight: bold;
+  position: absolute;
+  top: 60px;
+}
+
 #plateau{
     grid-column: 1;
 
