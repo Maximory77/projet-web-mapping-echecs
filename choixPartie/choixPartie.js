@@ -43,8 +43,8 @@ charger_partie.addEventListener('click', (a) => {
         let fin = bd_parties[i].fin;
 
         // Si la partie n'est pas finie, elle peut figurer dans le tableau des parties en cours
-        if (fin == 0) {
-          liste_partie.insertAdjacentHTML('beforeend', '<table><tr><td>'+id_partie+'</td><td>'+nom_partie+'</td><td>'+tour_partie+'</td><td>'+trait_partie+'</td><td>'+j1_partie+'</td><td>'+j2_partie+'</td><td><form class="formulaire" action="../partie/partie.html" method="post"><button type="submit" id="'+id_partie+'">Rejoindre</button></form></td></tr></table>');
+        if (fin == 0 && '"'+pseudo+'"' == bd_parties[i].j2) {
+          liste_partie.insertAdjacentHTML('beforeend', '<table><tr><td>'+id_partie+'</td><td>'+nom_partie+'</td><td>'+tour_partie+'</td><td>'+trait_partie+'</td><td>'+j1_partie+'</td><td>'+j2_partie+'</td><td><form class="formulaire" action="../partie/noir/partie_noir.html" method="post"><button type="submit" id="'+id_partie+'">Rejoindre</button></form></td></tr></table>');
 
           // // Création de l'eventlistener sur le bouton
           // id_partie.addEventListener('click', () => {
@@ -63,10 +63,32 @@ charger_partie.addEventListener('click', (a) => {
           // localStorage.setItem('id_partie', element_id)
           // });
         }
+        else if (fin == 0 && '"'+pseudo+'"' == bd_parties[i].j1) {
+          liste_partie.insertAdjacentHTML('beforeend', '<table><tr><td>'+id_partie+'</td><td>'+nom_partie+'</td><td>'+tour_partie+'</td><td>'+trait_partie+'</td><td>'+j1_partie+'</td><td>'+j2_partie+'</td><td><form class="formulaire" action="../partie/blanc/partie_blanc.html" method="post"><button type="submit" id="'+id_partie+'">Rejoindre</button></form></td></tr></table>');
+
+          // // Création de l'eventlistener sur le bouton
+          // id_partie.addEventListener('click', () => {
+          //
+          //   // Si la partie ne contient qu'un joueur, le second joueur est inscrit
+          //   if ("" == bd_parties[i].j2) {
+          //     // Le joueur rejoint la partie
+          //    fetch('../nouvelle_partie.json.php?&id_joueur="' + pseudo + '&partie=' + element_id)
+          //    .then(r => r.text())
+          //    .then(r => {
+          //    })
+          //   }
+          //
+          //
+          // // On stocke coté client l'id de la partie sélectionnée
+          // localStorage.setItem('id_partie', element_id)
+          // });
+          }
+
+        }
       }
-    }
     })
-});
+  });
+
 
 
 
@@ -90,7 +112,7 @@ new_partie.addEventListener('click', (a) => {
     for (let i=0; i<bd_joueurs.length || i<100; i++){
       if (pseudo != bd_joueurs[i].nom){
         let nom_joueur = bd_joueurs[i].nom;
-        liste_partie.insertAdjacentHTML('beforeend', '<table><tr><td>'+nom_joueur+'</td><td><form class="formulaire" action="../partie/partie.html" method="post"><button type="submit" id="'+nom_joueur+'">Défier</button></form></td></tr></table>');
+        liste_partie.insertAdjacentHTML('beforeend', '<table><tr><td>'+nom_joueur+'</td><td><form class="formulaire" action="../partie/blanc/partie_blanc.html" method="post"><button type="submit" id="'+nom_joueur+'">Défier</button></form></td></tr></table>');
 
         // nom_joueur.addEventListener(
         //   fetch('../nouvelle_partie.json.php?&id_joueur="' + pseudo)
