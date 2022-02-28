@@ -6,16 +6,13 @@
     alors arbitrage est lancé pour jouer le coup et rédiger une nouvelle situation
 
   entrée :
-    partie : id de la partie en cours
-    cote : 1 si c'est le blanc qui fait la requete, 2 si c'est le noir, 0 si arbitre
-    tour : numéro du tour, le premier tour est le tour 1
-    trait : 1 si c'est au blancs de jouer, 2 si c'est aux noirs
-    coup (optionnel) : rang du coup joué dans le tableau de coups du CR précédent
-
-  sortie :
-    erreur si besoin
-    si aucune MAJ disponible : {"ras":1}
-    sinon : contenu de la MAJ
+  - id_joueur : identifiant du joueur avec des double quotes ("id_joueur")
+  - partie : identifiant de la partie
+  - cote : il s'agit du côté du joueur (1 pour les blancs, 2 pour les noirs)
+  - tour : tour en cours pour le joueur effectuant la demande
+  - trait : côté de l'échiquier devant jouer
+  - coup (par défaut null) : coup joué par le joueur si celui-ci veut joueur
+  - test_unitaire : si égal à true, on est dans les tests unitaires et la BDD ne sera ainsi pas modifiée
 */
 // lien vers la base de données
 $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');

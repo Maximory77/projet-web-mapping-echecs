@@ -16,14 +16,15 @@ if (!$link) {
   mysqli_set_charset($link, "utf8");
   $partie = $_GET['partie'];
   echo $partie;
-  $requete = "UPDATE parties AS p1, (	 SELECT id,tour,trait,histo1,histo2,plateau
+  $requete = "UPDATE parties AS p1, (	 SELECT id,tour,trait,histo1,histo2,plateau,fin
               			                   FROM parties
-              			                   WHERE id = 999 ) AS p2
+              			                   WHERE id = 0 ) AS p2
               SET  p1.trait = p2.trait,
               	   p1.tour = p2.tour,
               	   p1.histo1 = p2.histo1,
               	   p1.histo2 = p2.histo2,
-              	   p1.plateau = p2.plateau
+              	   p1.plateau = p2.plateau,
+                   p1.fin = p2.fin
               WHERE p1.id = $partie";
   echo $requete;
   if ($result = mysqli_query($link,$requete)) {

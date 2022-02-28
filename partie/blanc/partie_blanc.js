@@ -38,6 +38,7 @@ var coup = 0;
 recharger_boutton = document.getElementById('recharger');
 recharger_boutton.addEventListener('click',function() {
   fetch('../recharger.php?partie=' + partie)
+  .then(r => r.text())
   .then(r => {
     console.log(r);
   })

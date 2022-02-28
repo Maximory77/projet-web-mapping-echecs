@@ -1,5 +1,7 @@
 <?php
 /*
+  renvoie le compte rendu d'un joueur, c'est à dire son historique complet, le tour et le trait de la partie.
+
   Vérifie id login valide et correspond à un joueur inscrit sur la partie,
   renvoie soit un message d'erreur, soit le compte rendu
 

@@ -1,4 +1,30 @@
 <?php
+/*
+Ce fichier permet de gérer les demandes/acceptations de nul et les abandons
+
+### Les entrées
+
+- id_joueur : identifiant du joueur avec des double quotes ("id_joueur")
+- partie : identifiant de la partie
+- cote : côté du joueur (1 ou 2)
+- nul (par défaut 0) : si égal à 1 on veut faire une demande ou une acceptation de nul
+- abandon (par défaut 0) : si égal à 1 on abandonne la partie
+- test_unitaire : si égal à true, on est dans les tests unitaires et la BDD ne sera ainsi pas modifiée
+
+
+### Les sorties
+
+> Comme le nom du fichier l'indique, les sorties sont sous forme de json
+
+1. **erreurs générales** :
+  - {"erreur" : "Erreur de connexion à la base de données"} => mauvaise connexion à la BDD, certainement à cause de la connexion internet
+  - {"erreur" : "Erreur de requete de base de donnees"}
+  - {"erreur" : "aucune des situations ne correspond"}
+  - {"erreur" : "aucune des situations ne correspond"}
+2. **CR** : json contenant les paramètres suivants
+  - {"requete" : "ok"} => il s'agit du seul retour pour indiquer au joueur que sa requête a bien été prise en compte
+
+*/
 
 $link = mysqli_connect('mysql-kevineuh.alwaysdata.net', 'kevineuh', 'root', 'kevineuh_chess_wihou');
 // Vérification du lien
