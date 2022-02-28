@@ -16,7 +16,7 @@ if (!$link) {
   mysqli_set_charset($link, "utf8");
   $partie = $_GET['partie'];
   echo $partie;
-  $requete = "UPDATE parties AS p1, (	 SELECT id,tour,trait,histo1,histo2,plateau,fin
+  $requete = "UPDATE parties AS p1, (	 SELECT id,tour,trait,histo1,histo2,plateau,fin,nul
               			                   FROM parties
               			                   WHERE id = 0 ) AS p2
               SET  p1.trait = p2.trait,
