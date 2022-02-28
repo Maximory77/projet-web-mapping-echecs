@@ -24,7 +24,8 @@ if (!$link) {
               	   p1.histo1 = p2.histo1,
               	   p1.histo2 = p2.histo2,
               	   p1.plateau = p2.plateau,
-                   p1.fin = p2.fin
+                   p1.fin = p2.fin,
+                   p1.nul = p2.nul
               WHERE p1.id = $partie";
   echo $requete;
   if ($result = mysqli_query($link,$requete)) {
