@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../style.css">
+    <title>chess wihou</title>
+  </head>
+  <body>
+
+    <div class="menu">
+      <a id="logo" href="../index.html"></a>
+      <div id="footer">
+        <p><strong>Kévin Beaupuy, Florian Bueno, Clément Fougerouse, Baptiste Rivière &copy; </strong></p>
+        <p>Décembre 2021-Février 2022</p>
+      </div>
+    </div>
+
+    <div id="container">
+      <div class="login-page">
+        <div class="form">
+          <form class="register-form">
+            <input type="text" placeholder="nom" id="pseudo_regis"/>
+            <input type="password" placeholder="mot de passe" id="mdp_regis"/>
+            <input type="text" placeholder="email" id="mail_regis"/>
+            <button id="bouton_regis">create</button>
+            <div id="erreur_regis">
+            </div>
+            <div id="pagesuivante_regis">
+            </div>
+            <p class="message">Déjà inscrit ? <a href="#">Se connecter</a></p>
+          </form>
+          <form class="login-form">
+            <input type="text" placeholder="nom" id="pseudo_login"/>
+            <input type="password" placeholder="mot de passe" id="mdp_login"/>
+            <button id="bouton_login">Se connecter</button>
+            <div id="erreur_login">
+            </div>
+            <div id="pagesuivante_login">
+            </div>
+            <p class="message">Pas encore inscrit ? <a href="#">Créer un compte</a></p>
+          </form>
+        </div>
+      </div>
+
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+        <script src="../log/log.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </div>
+  </body>
+</html>
